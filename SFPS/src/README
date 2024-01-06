@@ -1,0 +1,9 @@
+SFPS - Stochastic Fusor Particle Simulator
+
+This simulates the movement of single particles inside a Fusor.
+
+What data is produced?
+We are trying to produce a series of 'maps' that show where:
+1	Particles move, where they
+1	Fusion events occur, and their frequency
+2	How the potential is altered by the congregation of different charged particles occur

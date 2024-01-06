@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="SFPS" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/SFPS" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="--particles 10 --length 1000 --x 100 --y 100 --z 100 --potential 20000" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/SFPS" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="--particles 10 --length 1000 --x 100 --y 100 --z 100 --potential 20000" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+			<Add directory="/usr/local/include" />
+		</Compiler>
+		<Linker>
+			<Add library="/usr/local/lib/libboost_program_options.a" />
+			<Add directory="/usr/local/lib" />
+		</Linker>
+		<Unit filename="Calculations.h" />
+		<Unit filename="CollisionModel.h" />
+		<Unit filename="Configuration.cpp" />
+		<Unit filename="Configuration.h" />
+		<Unit filename="MappedFieldModel.h" />
+		<Unit filename="ParticleModel.h" />
+		<Unit filename="PointMap.h" />
+		<Unit filename="Proton.cpp" />
+		<Unit filename="Proton.h" />
+		<Unit filename="Quantities.cpp" />
+		<Unit filename="Quantities.h" />
+		<Unit filename="Scalar.h" />
+		<Unit filename="Vector3d.h" />
+		<Unit filename="main.cpp" />
+		<Unit filename="while_moving.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

@@ -1,0 +1,8 @@
+# add all build folder to ignore
+build/
+
+# add all dist folder to ignore
+.dist/
+
+# add all .vscode folder to ignore
+.vscode/
