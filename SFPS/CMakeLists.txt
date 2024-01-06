@@ -1,23 +1,20 @@
-cmake_minimum_required(VERSION 3.10)
-
+cmake_minimum_required(VERSION 2.4)
 project(SFPS)
 
-set(CMAKE_CXX_STANDARD 17)
-
-set(MAIN_SOURCES
+set(SOURCE_FILES
     src/main.cpp
     src/Configuration.cpp
     src/Proton.cpp
     src/Quantities.cpp
 )
 
-set(MAIN_HEADERS
+set(HEADER_FILES
     src/Calculations.h
     src/CollisionModel.h
     src/Configuration.h
     src/FieldVector.h
     src/MappedFieldModel.h
-    src/MicroMeterPoint.h
+    src/MicroMetrePoint.h
     src/PointMap.h
     src/Proton.h
     src/Quantities.h
@@ -26,8 +23,22 @@ set(MAIN_HEADERS
     src/while_moving.h
 )
 
-# create executable
-add_executable(SFPS ${MAIN_SOURCES} ${MAIN_HEADERS})
+if(WIN32)
+    set(CMAKE_CXX_STANDARD 11)
+    set(BOOST_ROOT "C:/boost_1_82_0")
+else()
+    set(CMAKE_CXX_STANDARD 11)
+    set(BOOST_ROOT "/opt/homebrew/Cellar/boost/1.83.0")
+endif()
 
-# add include directories
-target_include_directories(SFPS PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+find_package(Boost 1.83.0 REQUIRED COMPONENTS program_options)
+
+if(Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIRS})
+    add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES})
+    target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
+else()
+    message(FATAL_ERROR "Boost not found. Please set BOOST_ROOT to the correct Boost installation path.")
+endif()
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
