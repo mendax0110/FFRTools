@@ -31,7 +31,11 @@ else()
     set(BOOST_ROOT "/opt/homebrew/Cellar/boost/1.83.0")
 endif()
 
-find_package(Boost 1.83.0 REQUIRED COMPONENTS program_options)
+if(WIN32)
+    find_package(Boost 1.82.0 REQUIRED COMPONENTS program_options)
+else()
+    find_package(Boost 1.83.0 REQUIRED COMPONENTS program_options)
+endif()
 
 if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
