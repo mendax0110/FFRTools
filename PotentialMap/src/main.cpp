@@ -3,8 +3,8 @@
 #include <boost/mpl/vector.hpp>
 #include <boost/gil/typedefs.hpp>
 #include <boost/gil/image.hpp>
-#include <boost/gil/extension/dynamic_image/any_image.hpp>
-//#include <boost/gil/extension/io/jpeg_dynamic_io.hpp>
+#include <boost/gil/extension/io/jpeg.hpp>
+#include <boost/gil/extension/io/png.hpp>
 
 #include <iostream>
 #include <fstream>
@@ -13,6 +13,12 @@
 
 #include "Colourisers.h"
 #include "Calculators.h"
+
+namespace gil = boost::gil;
+
+using namespace Calculators;
+using namespace Colourisers;
+
 
 int main(int argc, const char** argv)
 {
@@ -38,7 +44,7 @@ int main(int argc, const char** argv)
 		c4 = boost::lexical_cast<int>(argv[4]);
 		c5 = boost::lexical_cast<int>(argv[5]) * 1000;
 	}
-	catch( const boost::bad_lexical_cast& ex)
+	catch(const boost::bad_lexical_cast& ex)
 	{
 		std::cout << "Unable to understand parameters. Use integer values only!\n" << ex.what();
 		return 0;
@@ -51,10 +57,8 @@ int main(int argc, const char** argv)
 	const int kV = c5;
 	
 	// Find out what each increment in position means (accounting for measurements in mm and not metres).
-	const double z_space =
-		(static_cast< double >(axis_max) / static_cast< double >(z_slices)) / 1000;
-	const double xy_space = 
-		(static_cast< double >(axis_max) / static_cast< double >(xy_slices)) / 1000;
+	const double z_space = (static_cast< double >(axis_max) / static_cast< double >(z_slices)) / 1000;
+	const double xy_space = (static_cast< double >(axis_max) / static_cast< double >(xy_slices)) / 1000;
 		
 	const int xy_half = xy_slices / 2;
 	
@@ -62,6 +66,7 @@ int main(int argc, const char** argv)
 	double maxPotential = std::numeric_limits< double >::min();
 	
 	double z_pos = 0.0;
+
 	for( int z = (z_slices / 2); z < z_slices; z++, z_pos+=z_space)
 	{
 		double x_pos = 0.0;
@@ -79,14 +84,14 @@ int main(int argc, const char** argv)
 			topName += boost::lexical_cast<std::string>(top);
 			bottomName += boost::lexical_cast<std::string>(z_slices - top);
 		}
-		catch( const boost::bad_lexical_cast& )
+		catch(const boost::bad_lexical_cast& ex)
 		{
-			std::cout	<< "Unable to create name of file for slices << "
-						<< top << " and " << bottom << std::endl;
+			std::cout << "Unable to create name of file for slices << " << top << " and " << bottom << std::endl;
+			std::cout << ex.what();
 		}
 		
-		topName += ".jpg";
-		bottomName += ".jpg";
+		topName += ".png";
+		bottomName += ".png";
 		
 		boost::gil::rgb8_image_t img(xy_slices, xy_slices);
 		boost::gil::rgb8_view_t vw = boost::gil::view(img);
@@ -97,7 +102,7 @@ int main(int argc, const char** argv)
 			
 			for(int y = 0; y < xy_half + (xy_half % 2); y++, y_pos+=xy_space)
 			{				
-				const double potential = calcPotentialAtPoint(
+				const double potential = PotentialCalulator::calcPotentialAtPoint(
 					x_pos, y_pos, z_pos, radius, kV);
 				minPotential = std::min(minPotential, potential);
 				maxPotential = std::max(maxPotential, potential);
@@ -106,7 +111,7 @@ int main(int argc, const char** argv)
 				int8_t g = 0;
 				int8_t b = 0;
 				
-				colourise(potential, kV, r, g, b);
+				ColouriserCreator::colourise(potential, kV, r, g, b);
 				
 				vw(xy_half + x, xy_half + y) = boost::gil::rgb8_pixel_t(r, g, b);
 				vw(xy_half + x, xy_half - y) = boost::gil::rgb8_pixel_t(r, g, b);
@@ -119,11 +124,12 @@ int main(int argc, const char** argv)
 			x_pos += xy_space;
 		}
 		
-		/*boost::gil::write_view(topName, vw);
+		gil::write_view(topName, vw, gil::png_tag());
+
 		if(top != bottom)
 		{
-			boost::gil::write_view(bottomName, vw);
-		}*/
+			gil::write_view(bottomName, vw, gil::png_tag());
+		}
 		
 		z_pos += z_space;
 		
@@ -131,10 +137,60 @@ int main(int argc, const char** argv)
 		{
 			for(int y = 0; y < xy_slices; y++)
 			{
+
 			}
 		}
+
+		// copy image, lay grid over it
+		gil::rgb8_image_t gridImg(xy_slices, xy_slices);
+		gil::rgb8_view_t gridVw = gil::view(gridImg);
+
+		for(int x = 0; x < xy_slices; x++)
+		{
+			for(int y = 0; y < xy_slices; y++)
+			{
+				gridVw(x, y) = vw(x, y);
+			}
+		}
+
+		for(int x = 0; x < xy_slices; x++)
+		{
+			for(int y = 0; y < xy_slices; y++)
+			{
+				if(0 == x % 10)
+				{
+					gridVw(x, y) = boost::gil::rgb8_pixel_t(0, 0, 0);
+				}
+				if(0 == y % 10)
+				{
+					gridVw(x, y) = boost::gil::rgb8_pixel_t(0, 0, 0);
+				}
+			}
+		}
+
+		std::string info = "z slices: " + boost::lexical_cast<std::string>(z_slices) + "\n" +
+							"xy slices: " + boost::lexical_cast<std::string>(xy_slices) + "\n" +
+							"axis size: " + boost::lexical_cast<std::string>(axis_max) + "\n" +
+							"radius: " + boost::lexical_cast<std::string>(radius) + "\n" +
+							"voltage: " + boost::lexical_cast<std::string>(kV) + "\n";
+
+		std::string gridName = "grid";
+
+		try
+		{
+			gridName += boost::lexical_cast<std::string>(top);
+		}
+		catch(const boost::bad_lexical_cast& ex)
+		{
+			std::cout << "Unable to create name of file for grid << " << top << std::endl;
+			std::cout << ex.what();
+		}
+
+		gridName += ".png";
+
+		gil::write_view(gridName, gridVw, gil::png_tag());
 	}
-	
+
 	std::cout << "Min = " << minPotential << "\n";
 	std::cout << "Max = " << maxPotential << "\n";
 

@@ -1,20 +1,11 @@
-#include <math.h>
-#include <stdint.h>
-#include <algorithm>
-
 #include "Colourisers.h"
 
-void RgbToHls(double r, double g,  double b, double &h, double &l, double s);
-void HlsToRgb(double h, double l, double s, int8_t &red, int8_t &green, int8_t &blue);
-double QqhToRgb(double q1, double q2, double hue);
-	
-int8_t toRed(const double magnitude, const double limit);
-int8_t toGreen(const double magnitude, const double limit);
-int8_t toBlue(const double magnitude, const double limit);
+using namespace Colourisers;
+
 
 #if false
 
-void colourise(const double magnitude, const double limit, int8_t &red, int8_t &green, int8_t &blue)
+void ColouriserCreator::colourise(const double magnitude, const double limit, int8_t &red, int8_t &green, int8_t &blue)
 {
 	double normalised = magnitude / limit;
 	
@@ -29,7 +20,7 @@ void colourise(const double magnitude, const double limit, int8_t &red, int8_t &
 
 #else
 
-void colourise(const double magnitude, const double limit, int8_t &red, int8_t &green, int8_t &blue)
+void ColouriserCreator::colourise(const double magnitude, const double limit, int8_t &red, int8_t &green, int8_t &blue)
 {
 	double normalised = magnitude / limit;
 	
@@ -49,7 +40,7 @@ void colourise(const double magnitude, const double limit, int8_t &red, int8_t &
 
 #endif
 
-int8_t toBlue(const double magnitude, const double limit)
+int8_t ColouriserCreator::toBlue(const double magnitude, const double limit)
 {
 	double normalised = magnitude / limit;
 	
@@ -63,7 +54,7 @@ int8_t toBlue(const double magnitude, const double limit)
 	return value;
 }
 
-int8_t toGreen(const double magnitude, const double limit)
+int8_t ColouriserCreator::toGreen(const double magnitude, const double limit)
 {
 	double normalised = magnitude / limit;
 
@@ -77,7 +68,7 @@ int8_t toGreen(const double magnitude, const double limit)
 	return value;
 }
 
-int8_t toRed(const double magnitude, const double limit)
+int8_t ColouriserCreator::toRed(const double magnitude, const double limit)
 {
 	double normalised = magnitude / limit;
 
@@ -91,9 +82,7 @@ int8_t toRed(const double magnitude, const double limit)
 	return value;
 }
 
-void RgbToHls(
-	double r, double g,  double b,
-	double &h, double &l, double s)
+void ColouriserCreator::RgbToHls(double r, double g,  double b,double &h, double &l, double s)
 {
 	double maxVal;
 	double minVal;
@@ -156,9 +145,7 @@ void RgbToHls(
 	}
 }
 
-void HlsToRgb(
-	double h, double l, double s,
-	int8_t &red, int8_t &green, int8_t &blue)
+void ColouriserCreator::HlsToRgb(double h, double l, double s, int8_t &red, int8_t &green, int8_t &blue)
 {
 	double p1;
 	double p2;
@@ -175,7 +162,7 @@ void HlsToRgb(
 	}
 	
     p1 = 2 * l - p2;
-    if(s = 0)
+    if(s == 0)
 	{
         r = l;
         g = l;
@@ -193,8 +180,7 @@ void HlsToRgb(
 	blue = static_cast< int8_t >(b * std::numeric_limits< int8_t >::max());
 }
 
-double QqhToRgb(
-	double q1, double q2, double hue)
+double ColouriserCreator::QqhToRgb(double q1, double q2, double hue)
 {
     if(hue > 360)
 	{

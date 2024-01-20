@@ -3,15 +3,12 @@
 #include "ParticleModel.h"
 #include "Proton.h"
 #include "CollisionModel.h"
-
 #include "PointMap.h"
-
 #include "while_moving.h"
-
 #include "Configuration.h"
 
 #include <boost/random.hpp>
-#include <ctime>            // std::time
+#include <ctime>
 
 class RandomPositionFactory
 {
@@ -69,9 +66,7 @@ int main(int argc, char* argv[])
         proton_model_t particle(start);
         while_moving(start, particle, collision, field, config.max_length);
 
-        for(proton_model_t::point_list_t::const_iterator pos = particle.get_track().begin();
-            pos != particle.get_track().end();
-            pos++)
+        for(proton_model_t::point_list_t::const_iterator pos = particle.get_track().begin(); pos != particle.get_track().end(); pos++)
         {
             std::cout << *pos << ",";
         }

@@ -6,3 +6,6 @@ build/
 
 # add all .vscode folder to ignore
 .vscode/
+
+# add .DS Store to ignore
+.DS_Store
