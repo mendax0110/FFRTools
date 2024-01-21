@@ -8,6 +8,9 @@
 #include "Configuration.h"
 
 #include <boost/random.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/filesystem.hpp>
+#include <fstream>
 #include <ctime>
 
 class RandomPositionFactory
@@ -72,6 +75,13 @@ int main(int argc, char* argv[])
         }
 
         std::cout << "(end)\n";
+
+        for(proton_model_t::point_list_t::const_iterator pos = particle.get_track().begin(); pos != particle.get_track().end(); pos++)
+        {
+            boost::filesystem::path p("positions.txt");
+            std::ofstream ofs(p.string().c_str(), std::ios_base::app);
+            ofs << *pos << "\n";
+        }
     }
 
     return 0;
