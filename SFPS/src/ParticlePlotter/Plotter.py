@@ -22,6 +22,7 @@ def create_scatter_plot(coordinates):
     ax.set_ylabel('Y-axis')
     ax.set_zlabel('Z-axis')
 
+    plt.title('Particle Positions Model')
     plt.show()
 
 
