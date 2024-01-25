@@ -21,9 +21,12 @@ Specific sections of this software are covered under the GPLv2. For these sectio
 - Ensure the inclusion of the original GPLv2 license text and clearly indicate any changes made to the GPLv2-licensed code.
 
 ## Usage
+
 create a build directory
 ```
+
 mkdir build
+```
 
 cd build
 ```
