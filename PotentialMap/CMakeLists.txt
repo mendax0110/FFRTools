@@ -6,7 +6,8 @@ set(SOURCE_FILES
     ./src/Colourisers.h
     ./src/Colourisers.cpp
     ./src/Calculators.h
-    ./src/Calculators.cpp)
+    ./src/Calculators.cpp
+    ./src/CalcMacros.h)
 
 if(WIN32)
     set(CMAKE_CXX_STANDARD 11)
