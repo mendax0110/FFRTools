@@ -25,7 +25,7 @@ set(HEADER_FILES
 
 if(WIN32)
     set(CMAKE_CXX_STANDARD 11)
-    set(BOOST_ROOT "C:/boost_1_82_0")
+    set(BOOST_ROOT "C:/boost/boost_1_82_0")
 else()
     set(CMAKE_CXX_STANDARD 11)
     set(BOOST_ROOT "/opt/homebrew/Cellar/boost/1.83.0")
