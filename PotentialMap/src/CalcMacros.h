@@ -14,42 +14,42 @@
 /*
  * @brief The macro for pi
  */
-#define PI 3.1415926535897932384626433832795028841971693993751058209749445923078164062
+#define PI_Macro 3.1415926535897932384626433832795028841971693993751058209749445923078164062
 
 /*
  * @brief The macro for the electric constant (epsilon_0) in SI units
  */
-#define k 8.9875517873681764 * pow(10, 9)
+#define k_Macro 8.9875517873681764 * pow(10, 9)
 
 /*
  * @brief The macro for the electric constant (epsilon_0) in SI units
  */
-#define kV 8.9875517873681764 * pow(10, 3)
+#define kV_Macro 8.9875517873681764 * pow(10, 3)
 
 /*
  * @brief The macro for coulombs constant (C) in SI units
  */
-#define C 1.602176487 * pow(10, -19)
+#define C_Macro 1.602176487 * pow(10, -19)
 
 /*
  * @brief The macro for the mass of an electron (m_e) in SI units
  */
-#define m_e 9.10938215 * pow(10, -31)
+#define m_e_Macro 9.10938215 * pow(10, -31)
 
 /*
  * @brief The macro for the mass of a proton (m_p) in SI units
  */
-#define m_p 1.672621637 * pow(10, -27)
+#define m_p_Macro 1.672621637 * pow(10, -27)
 
 /*
  * @brief The macro for the mass of a neutron (m_n) in SI units
  */
-#define m_n 1.674927211 * pow(10, -27)
+#define m_n_Macro 1.674927211 * pow(10, -27)
 
 /*
  * @brief The macro for deuterium gas (D2) in SI units
  */
-#define D2 3.343583719 * pow(10, -27)
+#define D2_Macro 3.343583719 * pow(10, -27)
 
 /*
  * @brief The macro to convert from degrees to radians
@@ -67,19 +67,19 @@
  * @brief The macro to convert from electron volts to joules
  */
 #define eV2J(eV, J) \
-    J = eV * C;
+    J = eV * C_Macro;
 
 /*
  * @brief The macro to convert from joules to electron volts
  */
 #define J2eV(J, eV) \
-    eV = J / C;
+    eV = J / C_Macro;
 
 /*
  * @brief The macro to calculate the density of the deuterium gas in the chamber
  */
 #define DENSITY(pressure, temperature, density) \
-    density = (pressure * D2) / (temperature * 8.314);
+    density = (pressure * D2_Macro) / (temperature * 8.314);
 
 /*
  * @brief The macro to calculate the mean free path of the deuterium gas in the chamber

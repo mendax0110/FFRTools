@@ -13,28 +13,68 @@
 
 #include "Colourisers.h"
 #include "Calculators.h"
+#include "GeneralEE.h"
 
 namespace gil = boost::gil;
 
 using namespace Calculators;
 using namespace Colourisers;
-
+using namespace GeneralEE;
 
 int main(int argc, const char** argv)
 {
-	if(6 != argc)
-	{
-		std::cout	<< "Params\n"
-					<< "\t<number of z axis slices>\n"
-					<< "\t<number of xy slices (pixel size)>\n"
-					<< "\t<axis size in mm>\n"
-					<< "\t<radius of poissor in mm>\n"
-					<< "\t<input voltage (kV)>\n";
-		return 0;
+	if (argc != 7)
+    {
+        std::cout << "Params\n"
+                  << "\t<number of z-axis slices>\n"
+                  << "\t<number of xy slices (pixel size)>\n"
+                  << "\t<axis size in mm>\n"
+                  << "\t<radius of poissor in mm>\n"
+                  << "\t<input voltage (kV)>\n"
+                  << "\n\nExample: ./PotentialMap 10 256 5 1 30 2\n"
+				  << "\n\nThe last number is the menu choice. 1 for chamber parameters, 2 for potential map.\n";
+        return 0;
+    }
+    else
+    {
+        std::string menuChoice(argv[1]);
+
+        if (menuChoice == "1")
+        {
+			std::cout << "Params\n"
+					  << "\t<filename>\n"
+					  << "\t<pressure>\n"
+					  << "\t<temperature>\n"
+					  << "\t<cross_section>\n"
+					  << "\t<energy>\n"
+					  << "\n\nExample: ./PotentialMap 1 filename 1 1 1 1\n";
+
+			std::string d2;
+			double d3, d4, d5, d6;
+
+			try
+			{
+				d2 = boost::lexical_cast<std::string>(argv[2]);
+				d3 = boost::lexical_cast<double>(argv[3]);
+				d4 = boost::lexical_cast<double>(argv[4]);
+				d5 = boost::lexical_cast<double>(argv[5]);
+				d6 = boost::lexical_cast<double>(argv[6]);
+			}
+			catch(const boost::bad_lexical_cast& ex)
+			{
+				std::cout << "Unable to understand parameters.\n" << ex.what();
+				return 0;
+			}
+
+            ElectricalEngineering chamberSimu;
+			HighVoltagePowerSupply hvps(30000, 75);
+
+            chamberSimu.calculateChamberParameters(d2, d3, d4, d5, d6);
+			hvps.simulateOperation();
+        }
 	}
-	
-	int c1, c2, c3, c4, c5;
-	
+
+	int c1, c2, c3, c4, c5;	
 	
 	try
 	{

@@ -7,7 +7,9 @@ set(SOURCE_FILES
     ./src/Colourisers.cpp
     ./src/Calculators.h
     ./src/Calculators.cpp
-    ./src/CalcMacros.h)
+    ./src/CalcMacros.h
+    ./src/GeneralEE.cpp
+    ./src/GeneralEE.h)
 
 if(WIN32)
     set(CMAKE_CXX_STANDARD 11)
