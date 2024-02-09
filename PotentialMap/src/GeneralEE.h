@@ -46,6 +46,25 @@ namespace GeneralEE
         double bleederResistance;
         double dischargeTime;
     };
+
+    class FusionRate
+    {
+    public:
+        FusionRate(double pressure, double temperature, double current, double recirculation, double meanVelocity, double gamma, double fusionReactivity);
+
+        double calculateFusionRate();
+        double calculateNeutronProductionRate();
+
+    private:
+        static constexpr double BoltzmannConstant = 1.380649e-23;
+        double pressure_;
+        double temperature_;
+        double current_;
+        double recirculation_;
+        double meanVelocity_;
+        double gamma_;
+        double fusionReactivity_;
+    };
 }
 
 #endif // GENERAL_EE_H_

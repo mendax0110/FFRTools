@@ -130,3 +130,22 @@ void HighVoltagePowerSupply::displayOutput() const
     file << "Discharge Time: " << dischargeTime << " s" << endl;
     file << "----------------------------------------------------" << endl;
 }
+
+FusionRate::FusionRate(double pressure, double temperature, double current, double recirculation, double meanVelocity, double gamma, double fusionReactivity)
+    : pressure_(pressure), temperature_(temperature), current_(current), recirculation_(recirculation), meanVelocity_(meanVelocity), gamma_(gamma), fusionReactivity_(fusionReactivity)
+{
+}
+
+double FusionRate::calculateFusionRate()
+{
+    double volume = 4.0 * M_PI * pow(recirculation_, 2) * current_ / (1.0 + gamma_);
+    double fusionRate = pressure_ / (BoltzmannConstant * temperature_) * current_ / ((1.0 + gamma_) * exp(1.0) * 2.0 * recirculation_ * fusionReactivity_ / meanVelocity_);
+    
+    return fusionRate;
+}
+
+double FusionRate::calculateNeutronProductionRate()
+{
+    double neutronProductionRate = 2.0 * calculateFusionRate();
+    return neutronProductionRate;
+}
