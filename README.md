@@ -22,18 +22,23 @@ Specific sections of this software are covered under the GPLv2. For these sectio
 
 ## Usage
 
+```
 create a build directory
 ```
 
+```
 mkdir build
 ```
 
+```
 cd build
 ```
 
+```
 cmake --build .
 ```
 
+```
 ./Build_PotentialMap
 ```
 
