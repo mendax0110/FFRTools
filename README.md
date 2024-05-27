@@ -41,19 +41,5 @@ cmake --build .
 
 This software was originally created by Pascal Dennerly.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 - **Pascal Dennerly**
 
