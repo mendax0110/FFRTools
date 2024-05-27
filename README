@@ -1,8 +1,5 @@
 # Potential MAP
 
-
-
-
 ## Licensing Information
 
 This project includes code that is licensed under multiple licenses. Please refer to the individual licenses for specific details and obligations.
@@ -43,6 +40,20 @@ cmake --build .
 ## Authors and Acknowledgments
 
 This software was originally created by Pascal Dennerly.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 - **Pascal Dennerly**
 
