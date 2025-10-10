@@ -1,5 +1,9 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 project(PotentialMap)
+
+set(CMAKE_CXX_COMPILER "/opt/homebrew/opt/llvm/bin/clang++")
+set(CMAKE_C_COMPILER "/opt/homebrew/opt/llvm/bin/clang")
+set(CMAKE_CXX_STANDARD 17)
 
 set(SOURCE_FILES
     ./src/main.cpp
@@ -16,7 +20,7 @@ if(WIN32)
     set(BOOST_ROOT "C:/boost_1_82_0")
     find_package(Boost 1.82.0 REQUIRED)
 else()
-    set(CMAKE_CXX_STANDARD 11)
+    set(CMAKE_CXX_STANDARD 14)
     set(BOOST_ROOT "/opt/homebrew/Cellar/boost/1.83.0")
     find_package(Boost 1.83.0 REQUIRED)
     find_package(JPEG REQUIRED)

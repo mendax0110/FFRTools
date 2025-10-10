@@ -1,5 +1,9 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.1)
 project(SFPS)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(SOURCE_FILES
     src/main.cpp
@@ -24,10 +28,10 @@ set(HEADER_FILES
 )
 
 if(WIN32)
-    set(CMAKE_CXX_STANDARD 11)
+    set(CMAKE_CXX_STANDARD 17)
     set(BOOST_ROOT "C:/boost/boost_1_82_0")
 else()
-    set(CMAKE_CXX_STANDARD 11)
+    set(CMAKE_CXX_STANDARD 23)
     set(BOOST_ROOT "/opt/homebrew/Cellar/boost/1.83.0")
 endif()
 
