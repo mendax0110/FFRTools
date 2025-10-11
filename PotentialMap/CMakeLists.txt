@@ -1,57 +1,42 @@
 cmake_minimum_required(VERSION 3.5)
 project(PotentialMap)
 
-set(CMAKE_CXX_COMPILER "/opt/homebrew/opt/llvm/bin/clang++")
-set(CMAKE_C_COMPILER "/opt/homebrew/opt/llvm/bin/clang")
-set(CMAKE_CXX_STANDARD 17)
-
 set(SOURCE_FILES
-    ./src/main.cpp
-    ./src/Colourisers.h
     ./src/Colourisers.cpp
-    ./src/Calculators.h
     ./src/Calculators.cpp
-    ./src/CalcMacros.h
     ./src/GeneralEE.cpp
-    ./src/GeneralEE.h)
+)
+set(HEADER_FILES
+    ./src/Colourisers.h
+    ./src/Calculators.h
+    ./src/CalcMacros.h
+    ./src/GeneralEE.h
+)
 
-if(WIN32)
-    set(CMAKE_CXX_STANDARD 11)
-    set(BOOST_ROOT "C:/boost_1_82_0")
-    find_package(Boost 1.82.0 REQUIRED)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_library(PotentialMapLib STATIC ${SOURCE_FILES} ${HEADER_FILES})
+
+if(TARGET Boost::program_options)
+    target_link_libraries(PotentialMapLib PUBLIC Boost::program_options)
 else()
-    set(CMAKE_CXX_STANDARD 14)
-    set(BOOST_ROOT "/opt/homebrew/Cellar/boost/1.83.0")
-    find_package(Boost 1.83.0 REQUIRED)
-    find_package(JPEG REQUIRED)
-    find_package(PNG REQUIRED)
+    target_link_libraries(PotentialMapLib PUBLIC ThirdParty)
 endif()
 
-if(Boost_FOUND)
-    include_directories(${Boost_INCLUDE_DIRS})
-    add_executable(${PROJECT_NAME} ${SOURCE_FILES})
-    target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
-    include_directories(${JPEG_INCLUDE_DIRS})
-    target_link_libraries(${PROJECT_NAME} ${JPEG_LIBRARIES})
-    include_directories(${PNG_INCLUDE_DIRS})
-    target_link_libraries(${PROJECT_NAME} ${PNG_LIBRARIES})
-else()
-    message(FATAL_ERROR "Boost not found. Please set BOOST_ROOT to the correct Boost installation path.")
+find_package(JPEG REQUIRED)
+find_package(PNG REQUIRED)
+
+if(JPEG_FOUND)
+    target_link_libraries(PotentialMapLib PUBLIC ${JPEG_LIBRARIES})
+    target_include_directories(PotentialMapLib PUBLIC ${JPEG_INCLUDE_DIRS})
 endif()
 
-if(WIN32)
-    include_directories(C:\\boost\\boost_1_82_0\\boost)
-    link_directories(C:\\boost\\boost_1_82_0\\bin.v2\\libs)
-else()
-    include_directories(/opt/homebrew/Cellar/boost/1.83.0/include)
-    link_directories(/opt/homebrew/Cellar/boost/1.83.0/lib)
-    link_libraries(/opt/homebrew/opt/jpeg/lib/libjpeg.dylib)
-    link_libraries(/opt/homebrew/opt/libpng/lib/libpng.dylib)
+if(PNG_FOUND)
+    target_link_libraries(PotentialMapLib PUBLIC ${PNG_LIBRARIES})
+    target_include_directories(PotentialMapLib PUBLIC ${PNG_INCLUDE_DIRS})
 endif()
 
-# Change the output directory to build/
+target_include_directories(PotentialMapLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
-
-# Create the build version
-add_executable(Build_${PROJECT_NAME} ${SOURCE_FILES})
-target_link_libraries(Build_${PROJECT_NAME} ${Boost_LIBRARIES})

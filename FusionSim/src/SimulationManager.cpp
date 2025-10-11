@@ -35,7 +35,8 @@ void SimulationManager::run(double t_max, double dt)
                 double v = v_rel.norm();
                 // Wirkungsquerschnitt nach Bosch-Hale für D-)
                 // E_rel in keV
-                double E_rel = 0.5 * particles[i]->getMass() * v*v / 1.60218e-16;
+                //double E_rel = 0.5 * particles[i]->getMass() * v*v / 1.60218e-16;
+                double E_rel = 0.5 * particles[i]->getMass().value * v*v / 1.60218e-16;
                 double S = 55.49; // keV*barn
                 double sigma = S * exp(-sqrt(46.0/E_rel)) / (E_rel); // barn
                 sigma *= 1e-28; // barn -> m^2
@@ -43,7 +44,10 @@ void SimulationManager::run(double t_max, double dt)
                 double prob = sigma * v * dt * n;
                 if (((double)rand()/RAND_MAX) < prob)
                 {
-                    auto products = reactionModel->react({particles[i]->clone(), particles[j]->clone()});
+                    std::vector<std::unique_ptr<IParticleModel>> reactants;
+                    reactants.emplace_back(std::unique_ptr<IParticleModel>(particles[i]->clone()));
+                    reactants.emplace_back(std::unique_ptr<IParticleModel>(particles[j]->clone()));
+                    auto products = reactionModel->react(reactants);
                     for (auto& prod : products) new_particles.push_back(std::move(prod));
                 }
             }
@@ -58,4 +62,9 @@ void SimulationManager::run(double t_max, double dt)
 const std::vector<std::unique_ptr<IParticleModel>>& SimulationManager::getParticles() const
 {
     return particles;
+}
+
+IFieldModel* SimulationManager::getFieldModel() const
+{
+    return fieldModel.get();
 }

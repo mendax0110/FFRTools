@@ -2,6 +2,7 @@
 #define PROTON_H_INCLUDED
 
 #include "Quantities.h"
+#include "Vector3d.h"
 
 class Proton
 {

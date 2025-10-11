@@ -2,6 +2,8 @@
 #define SCALAR_H_INCLUDED
 
 #include <cassert>
+#include <ostream>
+#include <type_traits>
 
 template< typename Quantity, typename Unit = long double >
 struct Scalar
@@ -30,7 +32,7 @@ struct Scalar
     Scalar< Quantity, Unit >& operator+(const Scalar< Quantity, Unit >& rhs) { value += rhs.value; return *this; }
     Scalar< Quantity, Unit >& operator-(const Scalar< Quantity, Unit >& rhs) { value -= rhs.value; return *this; }
     Scalar< Quantity, Unit >& operator*(const Scalar< Quantity, Unit >& rhs) { value *= rhs.value; return *this; }
-    Scalar< Quantity, Unit >& operator/(const Scalar< Quantity, Unit >& rhs) { value /= rhs.value; return *this; }
+    //Scalar< Quantity, Unit >& operator/(const Scalar< Quantity, Unit >& rhs) { value /= rhs.value; return *this; }
 
     template< typename T1 >
     static Scalar< Quantity, Unit > from(const T1& param1);
@@ -83,6 +85,28 @@ Scalar< LHS_Q, LHS_U > operator/(
 {
     Scalar< LHS_Q, LHS_U > result = lhs.value / rhs.value;
     return result;
+}
+
+template<typename Q, typename U>
+Scalar<Q, U> operator*(const Scalar<Q, U>& s, double d)
+{
+    return Scalar<Q, U>(s.value * d);
+}
+template<typename Q, typename U>
+Scalar<Q, U> operator*(double d, const Scalar<Q, U>& s)
+{
+    return Scalar<Q, U>(s.value * d);
+}
+template<typename Q, typename U>
+Scalar<Q, U> operator/(const Scalar<Q, U>& s, double d)
+{
+    return Scalar<Q, U>(s.value / d);
+}
+
+template<typename Q, typename U>
+Scalar<Q, U> operator-(const Scalar<Q, U>& s)
+{
+    return Scalar<Q, U>(-s.value);
 }
 
 #endif // SCALAR_H_INCLUDED

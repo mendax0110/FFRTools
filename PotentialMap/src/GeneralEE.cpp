@@ -140,7 +140,6 @@ double FusionRate::calculateFusionRate()
 {
     double volume = 4.0 * M_PI * pow(recirculation_, 2) * current_ / (1.0 + gamma_);
     double fusionRate = pressure_ / (BoltzmannConstant * temperature_) * current_ / ((1.0 + gamma_) * exp(1.0) * 2.0 * recirculation_ * fusionReactivity_ / meanVelocity_);
-    
     return fusionRate;
 }
 

@@ -1,4 +1,5 @@
 #include "Quantities.h"
+#include "Vector3d.h"
 
 
 template<> template<> Position Position::from(const Velocity& v, const Acceleration& a, const Time& t)

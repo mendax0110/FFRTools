@@ -2,7 +2,7 @@
 #define PARTICLEMODEL_H_INCLUDED
 
 #include "Quantities.h"
-
+#include "Vector3d.h"
 #include <vector>
 
 template< typename Particle >

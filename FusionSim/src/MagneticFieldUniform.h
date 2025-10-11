@@ -4,8 +4,8 @@
 class MagneticFieldUniform : public IMagneticFieldModel
 {
 public:
-    MagneticFieldUniform(const Vector3d& B) : m_B(B) {}
-    Vector3d getFieldAt(const Vector3d&) const override { return m_B; }
+    MagneticFieldUniform(const Vector3d<Velocity>& B) : m_B(B) {}
+    Vector3d<Velocity> getFieldAt(const Vector3d<Position>&) const override { return m_B; }
 private:
-    Vector3d m_B;
+    Vector3d<Velocity> m_B;
 };

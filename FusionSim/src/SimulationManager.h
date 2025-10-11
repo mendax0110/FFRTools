@@ -13,6 +13,7 @@ public:
     void addParticle(std::unique_ptr<IParticleModel> particle);
     void run(double t_max, double dt);
     const std::vector<std::unique_ptr<IParticleModel>>& getParticles() const;
+    IFieldModel* getFieldModel() const;
 private:
     std::unique_ptr<IFieldModel> fieldModel;
     std::unique_ptr<IReactionModel> reactionModel;

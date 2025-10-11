@@ -1,8 +1,7 @@
-
 cmake_minimum_required(VERSION 3.17)
 project(FusionSim LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(SIM_SRC
@@ -41,12 +40,10 @@ target_include_directories(FusionSim
 
 target_link_libraries(FusionSim
     PRIVATE
-        PotentialMap
-        SFPS
+        PotentialMapLib
+        SFPSLib
 )
 
-find_package(Boost 1.70 REQUIRED)
-if(Boost_FOUND)
-    target_include_directories(FusionSim PRIVATE ${Boost_INCLUDE_DIRS})
-    target_link_libraries(FusionSim PRIVATE ${Boost_LIBRARIES})
+if(TARGET Boost::program_options)
+    target_link_libraries(FusionSim PRIVATE Boost::program_options)
 endif()

@@ -5,5 +5,5 @@ class IMagneticFieldModel
 {
 public:
     virtual ~IMagneticFieldModel() = default;
-    virtual Vector3d getFieldAt(const Vector3d& position) const = 0;
+    virtual Vector3d<Velocity> getFieldAt(const Vector3d<Position>& position) const = 0;
 };

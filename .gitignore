@@ -9,3 +9,9 @@ build/
 
 # add .DS Store to ignore
 .DS_Store
+
+# add debug build folder to ignore
+cmake-build-debug/
+
+#idea folder
+.idea/

@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 #include <string>
+#include "IParticleModel.h"
+#include "Vector3d.h"
 
 class Visualizer
 {

@@ -1,9 +1,5 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.5)
 project(SFPS)
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(SOURCE_FILES
     src/main.cpp
@@ -27,26 +23,17 @@ set(HEADER_FILES
     src/while_moving.h
 )
 
-if(WIN32)
-    set(CMAKE_CXX_STANDARD 17)
-    set(BOOST_ROOT "C:/boost/boost_1_82_0")
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_library(SFPSLib STATIC ${SOURCE_FILES} ${HEADER_FILES})
+
+if(TARGET Boost::program_options)
+    target_link_libraries(SFPSLib PUBLIC Boost::program_options)
 else()
-    set(CMAKE_CXX_STANDARD 23)
-    set(BOOST_ROOT "/opt/homebrew/Cellar/boost/1.83.0")
+    target_link_libraries(SFPSLib PUBLIC ThirdParty)
 endif()
 
-if(WIN32)
-    find_package(Boost 1.82.0 REQUIRED COMPONENTS program_options)
-else()
-    find_package(Boost 1.83.0 REQUIRED COMPONENTS program_options)
-endif()
-
-if(Boost_FOUND)
-    include_directories(${Boost_INCLUDE_DIRS})
-    add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES})
-    target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
-else()
-    message(FATAL_ERROR "Boost not found. Please set BOOST_ROOT to the correct Boost installation path.")
-endif()
+target_include_directories(SFPSLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
