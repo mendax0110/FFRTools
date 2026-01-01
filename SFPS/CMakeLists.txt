@@ -5,26 +5,36 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Library source files (without main.cpp)
+set(LIB_SOURCE_FILES
+        src/Configuration.cpp
+        src/Proton.cpp
+        src/Quantities.cpp
+)
+
+set(LIB_HEADER_FILES
+        src/Calculations.h
+        src/CollisionModel.h
+        src/Configuration.h
+        src/FieldVector.h
+        src/MappedFieldModel.h
+        src/MicroMetrePoint.h
+        src/PointMap.h
+        src/Proton.h
+        src/Quantities.h
+        src/Scalar.h
+        src/Vector3d.h
+        src/while_moving.h
+)
+
+# All source files including main
 set(SOURCE_FILES
-    src/main.cpp
-    src/Configuration.cpp
-    src/Proton.cpp
-    src/Quantities.cpp
+        src/main.cpp
+        ${LIB_SOURCE_FILES}
 )
 
 set(HEADER_FILES
-    src/Calculations.h
-    src/CollisionModel.h
-    src/Configuration.h
-    src/FieldVector.h
-    src/MappedFieldModel.h
-    src/MicroMetrePoint.h
-    src/PointMap.h
-    src/Proton.h
-    src/Quantities.h
-    src/Scalar.h
-    src/Vector3d.h
-    src/while_moving.h
+        ${LIB_HEADER_FILES}
 )
 
 if(WIN32)
@@ -43,8 +53,16 @@ endif()
 
 if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
-    add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES})
-    target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
+
+    # Create LIBRARY target (for linking into other projects)
+    add_library(${PROJECT_NAME} STATIC ${LIB_SOURCE_FILES} ${LIB_HEADER_FILES})
+    target_include_directories(${PROJECT_NAME} PUBLIC src)
+    target_link_libraries(${PROJECT_NAME} PUBLIC ${Boost_LIBRARIES})
+
+    # Create EXECUTABLE target (standalone program)
+    add_executable(${PROJECT_NAME}_exe ${SOURCE_FILES} ${HEADER_FILES})
+    target_link_libraries(${PROJECT_NAME}_exe ${Boost_LIBRARIES})
+
 else()
     message(FATAL_ERROR "Boost not found. Please set BOOST_ROOT to the correct Boost installation path.")
 endif()

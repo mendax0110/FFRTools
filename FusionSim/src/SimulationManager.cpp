@@ -1,6 +1,6 @@
 #include "SimulationManager.h"
 
-void SimulationManager::setFieldModel(std::unique_ptr<IFieldModel> model)
+void SimulationManager::setFieldModel(std::shared_ptr<IFieldModel> model)
 {
     fieldModel = std::move(model);
 }
@@ -43,7 +43,10 @@ void SimulationManager::run(double t_max, double dt)
                 double prob = sigma * v * dt * n;
                 if (((double)rand()/RAND_MAX) < prob)
                 {
-                    auto products = reactionModel->react({particles[i]->clone(), particles[j]->clone()});
+                    std::vector<std::unique_ptr<IParticleModel>> reactants;
+                    reactants.push_back(particles[i]->clone());
+                    reactants.push_back(particles[j]->clone());
+                    auto products = reactionModel->react(reactants);
                     for (auto& prod : products) new_particles.push_back(std::move(prod));
                 }
             }

@@ -1,6 +1,9 @@
 #include "Visualizer.h"
 #include <fstream>
 #include <iostream>
+#include <memory>
+#include "IParticleModel.h"
+#include "Scalar.h"
 
 void Visualizer::plot(const std::vector<std::unique_ptr<IParticleModel>>& particles, const std::string& filename)
 {
@@ -13,9 +16,9 @@ void Visualizer::plot(const std::vector<std::unique_ptr<IParticleModel>>& partic
         Vector3d vel = p->getVelocity();
         double mass = p->getMass();
         double charge = p->getCharge();
-        out << pos.x() << "," << pos.y() << "," << pos.z() << ","
-            << vel.x() << "," << vel.y() << "," << vel.z() << ","
-            << mass << "," << charge << std::endl;
+        out << pos.x << "," << pos.y << "," << pos.z << ","
+            << vel.x << "," << vel.y << "," << vel.z << ","
+            << mass << "," << charge << "\n";
     }
     out.close();
     std::cout << "Daten als fusion_particles.csv gespeichert. Python-Skript kann daraus Bild erzeugen." << std::endl;

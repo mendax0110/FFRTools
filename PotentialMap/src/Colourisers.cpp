@@ -1,5 +1,5 @@
 #include "Colourisers.h"
-
+#include <limits>
 using namespace Colourisers;
 
 

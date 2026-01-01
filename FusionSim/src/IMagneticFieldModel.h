@@ -1,5 +1,5 @@
 #pragma once
-#include "Vector3d.h"
+#include "Vector3dSimple.h"
 
 class IMagneticFieldModel
 {

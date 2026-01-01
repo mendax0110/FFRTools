@@ -7,6 +7,8 @@
 #include "ReactionModelDT.h"
 #include <iostream>
 #include <string>
+#include "MagneticFieldUniform.h"
+#include "Visualizer.h"
 
 int CLI::run(int argc, char* argv[])
 {
@@ -57,7 +59,7 @@ int CLI::run(int argc, char* argv[])
 
     SimulationManager sim;
     Potential pot;
-    sim.setFieldModel(std::make_unique<FieldModelPotentialMap>(pot));
+    sim.setFieldModel(std::make_shared<FieldModelPotentialMap>(pot));
     MagneticFieldUniform magfield(Vector3d(0,0,1));
 
     if (mode == "dd")
@@ -78,7 +80,7 @@ int CLI::run(int argc, char* argv[])
         double phi = acos(2*((double)rng()/rng.max())-1);
         Vector3d pos(r*sin(phi)*cos(theta), r*sin(phi)*sin(theta), r*cos(phi));
         Vector3d vel(vdist(rng), vdist(rng), vdist(rng));
-        sim.addParticle(std::make_unique<ParticleModelSFPS>(pos, vel, deuterium_mass, deuterium_charge, sim.getFieldModel(), &magfield));
+        sim.addParticle(std::make_unique<ParticleModelSFPS>(pos, vel, deuterium_mass, deuterium_charge, sim.getFieldModel().get(), &magfield));
     }
     sim.run(tmax, dt);
     Visualizer::plot(sim.getParticles());

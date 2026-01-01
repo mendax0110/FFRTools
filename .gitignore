@@ -9,3 +9,6 @@ build/
 
 # add .DS Store to ignore
 .DS_Store
+
+# Add idea folder
+.idea/

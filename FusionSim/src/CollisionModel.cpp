@@ -23,7 +23,7 @@ void CollisionModel::elasticCollision(IParticleModel& p1, IParticleModel& p2)
     p2.setVelocity(v2_new);
 }
 
-static void CollisionModel::inelasticCollision(IParticleModel& p1, IParticleModel& p2, double energyLoss)
+void CollisionModel::inelasticCollision(IParticleModel& p1, IParticleModel& p2, double energyLoss)
 {
     double m1 = p1.getMass();
     double m2 = p2.getMass();
