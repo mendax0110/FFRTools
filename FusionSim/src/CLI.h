@@ -1,8 +1,11 @@
 #pragma once
 #include <string>
 
-class CLI
+namespace fusion
 {
-public:
-    int run(int argc, char* argv[]);
-};
+    class CLI
+    {
+    public:
+        static int run(int argc, char* argv[]);
+    };
+}

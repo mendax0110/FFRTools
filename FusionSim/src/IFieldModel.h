@@ -2,9 +2,12 @@
 #include <memory>
 #include "Vector3dSimple.h"
 
-class IFieldModel
+namespace fusion
 {
-public:
-    virtual ~IFieldModel() = default;
-    virtual Vector3d getFieldAt(const Vector3d& position) const = 0;
-};
+    class IFieldModel
+    {
+    public:
+        virtual ~IFieldModel() = default;
+        [[nodiscard]] virtual Vector3d getFieldAt(const Vector3d& position) const = 0;
+    };
+}

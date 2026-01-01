@@ -1,64 +1,101 @@
 #include "SimulationManager.h"
+#include <cmath>
+
+using namespace fusion;
+
+SimulationManager::SimulationManager()
+    : m_rng(std::random_device{}())
+{
+}
 
 void SimulationManager::setFieldModel(std::shared_ptr<IFieldModel> model)
 {
-    fieldModel = std::move(model);
+    m_fieldModel = std::move(model);
+}
+
+void SimulationManager::setMagneticFieldModel(std::shared_ptr<IMagneticFieldModel> model)
+{
+    m_magFieldModel = std::move(model);
 }
 
 void SimulationManager::setReactionModel(std::unique_ptr<IReactionModel> model)
 {
-    reactionModel = std::move(model);
+    m_reactionModel = std::move(model);
 }
 
 void SimulationManager::addParticle(std::unique_ptr<IParticleModel> particle)
 {
-    particles.push_back(std::move(particle));
+    m_particles.push_back(std::move(particle));
 }
 
-void SimulationManager::run(double t_max, double dt)
+void SimulationManager::run(const double t_max, const double dt)
 {
+    std::uniform_real_distribution<double> uniform(0.0, 1.0);
     double t = 0.0;
+
     while (t < t_max)
     {
-        for (auto& p : particles)
+        for (const auto& p : m_particles)
         {
             p->propagate(dt);
         }
 
-        std::vector<std::unique_ptr<IParticleModel>> new_particles;
-        for (size_t i = 0; i < particles.size(); ++i)
+        std::vector<std::unique_ptr<IParticleModel>> newParticles;
+
+        for (size_t i = 0; i < m_particles.size(); ++i)
         {
-            for (size_t j = i+1; j < particles.size(); ++j)
+            for (size_t j = i + 1; j < m_particles.size(); ++j)
             {
-                // reaktionswahrscheindlickeit nach wirkungsquerschnitt
-                Vector3d v_rel = particles[i]->getVelocity() - particles[j]->getVelocity();
-                double v = v_rel.norm();
-                // Wirkungsquerschnitt nach Bosch-Hale für D-)
-                // E_rel in keV
-                double E_rel = 0.5 * particles[i]->getMass() * v*v / 1.60218e-16;
-                double S = 55.49; // keV*barn
-                double sigma = S * exp(-sqrt(46.0/E_rel)) / (E_rel); // barn
-                sigma *= 1e-28; // barn -> m^2
-                double n = 1.0; // Normierung, kann Dichte sein
-                double prob = sigma * v * dt * n;
-                if (((double)rand()/RAND_MAX) < prob)
+                Vector3d vRel = m_particles[i]->getVelocity() - m_particles[j]->getVelocity();
+                const double v = vRel.norm();
+
+                const double reducedMass = (m_particles[i]->getMass() * m_particles[j]->getMass()) / (m_particles[i]->getMass() + m_particles[j]->getMass());
+                const double E_rel_keV = 0.5 * reducedMass * v * v / 1.60218e-16;
+
+                const double sigma = m_reactionModel->getCrossSection(E_rel_keV);
+
+                constexpr double particleDensity = 1.0e20;
+                const double prob = sigma * v * dt * particleDensity;
+
+                if (uniform(m_rng) < prob)
                 {
                     std::vector<std::unique_ptr<IParticleModel>> reactants;
-                    reactants.push_back(particles[i]->clone());
-                    reactants.push_back(particles[j]->clone());
-                    auto products = reactionModel->react(reactants);
-                    for (auto& prod : products) new_particles.push_back(std::move(prod));
+                    reactants.push_back(m_particles[i]->clone());
+                    reactants.push_back(m_particles[j]->clone());
+
+                    auto products = m_reactionModel->react(
+                        reactants,
+                        m_fieldModel,
+                        m_magFieldModel);
+
+                    for (auto& prod : products)
+                    {
+                        newParticles.push_back(std::move(prod));
+                    }
                 }
             }
         }
-        for (auto& np : new_particles) particles.push_back(std::move(np));
+
+        for (auto& np : newParticles)
         {
-            t += dt;
+            m_particles.push_back(std::move(np));
         }
+
+        t += dt;
     }
 }
 
 const std::vector<std::unique_ptr<IParticleModel>>& SimulationManager::getParticles() const
 {
-    return particles;
+    return m_particles;
+}
+
+std::shared_ptr<IFieldModel> SimulationManager::getFieldModel() const
+{
+    return m_fieldModel;
+}
+
+std::shared_ptr<IMagneticFieldModel> SimulationManager::getMagneticFieldModel() const
+{
+    return m_magFieldModel;
 }

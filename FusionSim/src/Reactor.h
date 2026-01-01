@@ -8,7 +8,7 @@ public:
     void setup_DD();
     void setup_DT();
     void simulate();
-    std::vector<double> getResults() const;
+    [[nodiscard]] std::vector<double> getResults() const;
 private:
     FusionReaction reaction;
     std::vector<double> results;

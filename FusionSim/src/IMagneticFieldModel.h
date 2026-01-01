@@ -1,9 +1,12 @@
 #pragma once
 #include "Vector3dSimple.h"
 
-class IMagneticFieldModel
+namespace fusion
 {
-public:
-    virtual ~IMagneticFieldModel() = default;
-    virtual Vector3d getFieldAt(const Vector3d& position) const = 0;
-};
+    class IMagneticFieldModel
+    {
+    public:
+        virtual ~IMagneticFieldModel() = default;
+        [[nodiscard]] virtual Vector3d getFieldAt(const Vector3d& position) const = 0;
+    };
+}

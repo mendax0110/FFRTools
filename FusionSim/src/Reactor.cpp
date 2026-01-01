@@ -21,6 +21,7 @@ void Reactor::simulate()
     }
     std::cout << "Simulation abgeschlossen: " << results.size() << " Ereignisse." << std::endl;
 }
+
 std::vector<double> Reactor::getResults() const
 {
     return results;

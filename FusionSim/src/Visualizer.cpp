@@ -3,11 +3,11 @@
 #include <iostream>
 #include <memory>
 #include "IParticleModel.h"
-#include "Scalar.h"
+
+using namespace fusion;
 
 void Visualizer::plot(const std::vector<std::unique_ptr<IParticleModel>>& particles, const std::string& filename)
 {
-    // export cvs
     std::ofstream out("fusion_particles.csv");
     out << "x,y,z,vx,vy,vz,mass,charge" << std::endl;
     for (const auto& p : particles)
@@ -21,5 +21,5 @@ void Visualizer::plot(const std::vector<std::unique_ptr<IParticleModel>>& partic
             << mass << "," << charge << "\n";
     }
     out.close();
-    std::cout << "Daten als fusion_particles.csv gespeichert. Python-Skript kann daraus Bild erzeugen." << std::endl;
+    std::cout << "Daten als fusion_particles.csv gespeichert. " << "Python-Skript kann daraus Bild erzeugen." << std::endl;
 }

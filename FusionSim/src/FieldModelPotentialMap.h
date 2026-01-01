@@ -1,15 +1,18 @@
 #pragma once
 #include "IFieldModel.h"
+#include "PointMap.h"
 
-// Forward declare to avoid including SFPS headers
-class PointMap;
-
-class FieldModelPotentialMap : public IFieldModel
+namespace fusion
 {
-public:
-    FieldModelPotentialMap(const PointMap& map);
-    Vector3d getFieldAt(const Vector3d& position) const override;
+    class FieldModelPotentialMap : public IFieldModel
+    {
+    public:
+        explicit FieldModelPotentialMap(const PointMap& map);
+        explicit FieldModelPotentialMap(double potentialValue);
 
-private:
-    const PointMap& m_map;
-};
+        [[nodiscard]] fusion::Vector3d getFieldAt(const Vector3d& position) const override;
+
+    private:
+        PointMap m_map;
+    };
+}

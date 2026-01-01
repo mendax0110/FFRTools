@@ -1,7 +1,6 @@
 #include "CLI.h"
 
-int main(int argc, char* argv[])
+int main(const int argc, char* argv[])
 {
-    CLI cli;
-    return cli.run(argc, argv);
+    return fusion::CLI::run(argc, argv);
 }

@@ -39,16 +39,14 @@ target_include_directories(FusionSim
         ${CMAKE_SOURCE_DIR}/../SFPS/src
 )
 
-# Find boost
 find_package(Boost REQUIRED)
 if(Boost_FOUND)
     target_include_directories(FusionSim PRIVATE ${Boost_INCLUDE_DIRS})
     target_link_libraries(FusionSim PRIVATE ${Boost_LIBRARIES})
 endif()
 
-# Link libraries (linking to the library targets, not the executables)
 target_link_libraries(FusionSim
         PRIVATE
-        PotentialMap  # This is now the library target
-        SFPS          # This is now the library target
+        PotentialMap
+        SFPS
 )
