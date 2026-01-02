@@ -1,4 +1,3 @@
-#define _USE_MATH_DEFINES
 #include "Colourisers.h"
 #include <cmath>
 #include <limits>

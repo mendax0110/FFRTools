@@ -172,7 +172,7 @@ jobs:
 
       - name: Install dependencies with vcpkg
         run: |
-          vcpkg install boost-random boost-filesystem boost-lexical-cast boost-program-options boost-gil boost-mpl
+          vcpkg install boost-gil boost-program-options boost-ublas libjpeg-turbo libpng
 
       - name: Configure and Build SFPS
         run: |
