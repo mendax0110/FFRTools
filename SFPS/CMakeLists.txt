@@ -46,9 +46,9 @@ else()
 endif()
 
 if(WIN32)
-    find_package(Boost 1.82.0 REQUIRED COMPONENTS program_options)
+    find_package(Boost 1.82.0 REQUIRED COMPONENTS program_options filesystem)
 else()
-    find_package(Boost 1.83.0 REQUIRED COMPONENTS program_options)
+    find_package(Boost 1.83.0 REQUIRED COMPONENTS program_options filesystem)
 endif()
 
 if(Boost_FOUND)
