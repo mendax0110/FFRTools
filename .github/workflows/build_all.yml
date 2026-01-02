@@ -1,0 +1,218 @@
+name: Build FFRTools
+
+on:
+  push:
+    branches: [ master, main, develop ]
+  pull_request:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        compiler: [gcc, clang]
+        build_type: [Release, Debug]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            cmake \
+            libboost-all-dev \
+            libpng-dev \
+            libomp-dev
+
+      - name: Set up GCC
+        if: matrix.compiler == 'gcc'
+        run: |
+          echo "CC=gcc" >> $GITHUB_ENV
+          echo "CXX=g++" >> $GITHUB_ENV
+
+      - name: Set up Clang
+        if: matrix.compiler == 'clang'
+        run: |
+          echo "CC=clang" >> $GITHUB_ENV
+          echo "CXX=clang++" >> $GITHUB_ENV
+
+      - name: Build SFPS
+        run: |
+          cd SFPS
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          make -j$(nproc)
+
+      - name: Build PotentialMap
+        run: |
+          cd PotentialMap
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          make -j$(nproc)
+
+      - name: Build FusionSim
+        run: |
+          cd FusionSim/src
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          make -j$(nproc)
+
+      - name: Upload SFPS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SFPS-${{ matrix.compiler }}-${{ matrix.build_type }}-linux
+          path: SFPS/build/SFPS
+          if-no-files-found: ignore
+
+      - name: Upload PotentialMap artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PotentialMap-${{ matrix.compiler }}-${{ matrix.build_type }}-linux
+          path: PotentialMap/build/PotentialMap
+          if-no-files-found: ignore
+
+      - name: Upload FusionSim artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FusionSim-${{ matrix.compiler }}-${{ matrix.build_type }}-linux
+          path: FusionSim/src/build/FusionSim
+          if-no-files-found: ignore
+
+  build-macos:
+    runs-on: macos-latest
+
+    strategy:
+      matrix:
+        build_type: [Release, Debug]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          brew install boost libpng libomp cmake
+
+      - name: Build SFPS
+        run: |
+          cd SFPS
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          make -j$(sysctl -n hw.ncpu)
+
+      - name: Build PotentialMap
+        run: |
+          cd PotentialMap
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          make -j$(sysctl -n hw.ncpu)
+
+      - name: Build FusionSim
+        run: |
+          cd FusionSim/src
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          make -j$(sysctl -n hw.ncpu)
+
+      - name: Upload SFPS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SFPS-${{ matrix.build_type }}-macos
+          path: SFPS/build/SFPS
+          if-no-files-found: ignore
+
+      - name: Upload PotentialMap artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PotentialMap-${{ matrix.build_type }}-macos
+          path: PotentialMap/build/PotentialMap
+          if-no-files-found: ignore
+
+      - name: Upload FusionSim artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FusionSim-${{ matrix.build_type }}-macos
+          path: FusionSim/src/build/FusionSim
+          if-no-files-found: ignore
+
+  build-windows:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        build_type: [Release, Debug]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Boost
+        uses: MarkusJx/install-boost@v2.4.5
+        id: install-boost
+        with:
+          boost_version: 1.83.0
+          platform_version: 2022
+          toolset: msvc
+
+      - name: Configure and Build SFPS
+        run: |
+          cd SFPS
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DBOOST_ROOT=${{ steps.install-boost.outputs.BOOST_ROOT }}
+          cmake --build . --config ${{ matrix.build_type }} --parallel
+
+      - name: Configure and Build PotentialMap
+        run: |
+          cd PotentialMap
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DBOOST_ROOT=${{ steps.install-boost.outputs.BOOST_ROOT }}
+          cmake --build . --config ${{ matrix.build_type }} --parallel
+
+      - name: Configure and Build FusionSim
+        run: |
+          cd FusionSim/src
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DBOOST_ROOT=${{ steps.install-boost.outputs.BOOST_ROOT }}
+          cmake --build . --config ${{ matrix.build_type }} --parallel
+
+      - name: Upload SFPS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SFPS-${{ matrix.build_type }}-windows
+          path: SFPS/build/${{ matrix.build_type }}/SFPS.exe
+          if-no-files-found: ignore
+
+      - name: Upload PotentialMap artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PotentialMap-${{ matrix.build_type }}-windows
+          path: PotentialMap/build/${{ matrix.build_type }}/PotentialMap.exe
+          if-no-files-found: ignore
+
+      - name: Upload FusionSim artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FusionSim-${{ matrix.build_type }}-windows
+          path: FusionSim/src/build/${{ matrix.build_type }}/FusionSim.exe
+          if-no-files-found: ignore

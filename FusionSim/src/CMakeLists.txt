@@ -4,6 +4,13 @@ project(FusionSim LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+find_package(OpenMP)
+if(OpenMP_CXX_FOUND)
+    message(STATUS "OpenMP found - enabling parallel execution")
+else()
+    message(WARNING "OpenMP not found - simulation will run single-threaded")
+endif()
+
 set(SIM_SRC
         main.cpp
         CLI.cpp
@@ -17,6 +24,7 @@ set(SIM_SRC
         ParticleModelSFPS.h
         FieldModelPotentialMap.h
         FieldModelPotentialMap.cpp
+        FarnsworthFusorFieldModel.h
         MagneticFieldUniform.h
         CollisionModel.cpp
         CollisionModel.h
@@ -28,6 +36,8 @@ set(SIM_SRC
         IMagneticFieldModel.h
         IParticleModel.h
         IReactionModel.h
+        PhysicalConstants.h
+        Vector3dSimple.h
 )
 
 add_executable(FusionSim ${SIM_SRC})
@@ -50,3 +60,8 @@ target_link_libraries(FusionSim
         PotentialMap
         SFPS
 )
+
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(FusionSim PRIVATE OpenMP::OpenMP_CXX)
+    target_compile_definitions(FusionSim PRIVATE USE_OPENMP)
+endif()

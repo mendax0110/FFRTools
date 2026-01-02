@@ -12,3 +12,7 @@ build/
 
 # Add idea folder
 .idea/
+
+# Ignore the python related files
+.venv/
+venv

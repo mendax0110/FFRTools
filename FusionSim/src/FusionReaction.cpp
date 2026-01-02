@@ -19,6 +19,6 @@ FusionReaction FusionReaction::DeuteriumTritium()
 }
 double FusionReaction::simulateEvent()
 {
-    std::normal_distribution<double> dist(Q_value, 0.1);
+    std::normal_distribution<> dist(Q_value, 0.1);
     return dist(rng);
 }

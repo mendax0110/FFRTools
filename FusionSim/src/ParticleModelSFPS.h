@@ -6,11 +6,23 @@
 #include <cmath>
 #include <memory>
 
+/// @brief FusionSim - a simulator for FFR \namespace  fusion
 namespace fusion
 {
+    /// @brief Simple Particle Model using 4th order Runge-Kutta for propagation. \class ParticleModelSFPS
     class ParticleModelSFPS : public IParticleModel
     {
     public:
+
+        /**
+         * @brief Constructor for ParticleModelSFPS.
+         * @param pos Initial position.
+         * @param vel Initial velocity.
+         * @param mass Particle mass.
+         * @param charge Particle charge.
+         * @param field Shared pointer to the electric field model.
+         * @param magfield Shared pointer to the magnetic field model.
+         */
         ParticleModelSFPS(
             const Vector3d& pos,
             const Vector3d& vel,
@@ -27,6 +39,10 @@ namespace fusion
         {
         }
 
+        /**
+         * @brief Propagate the particle using 4th order Runge-Kutta method.
+         * @param dt Time step for propagation.
+         */
         void propagate(const double dt) override
         {
             auto rhs = [&](const Vector3d& r, const Vector3d& v) -> Vector3d
@@ -50,41 +66,73 @@ namespace fusion
             velocity += (dt / 6.0) * (k1v + 2.0 * k2v + 2.0 * k3v + k4v);
         }
 
+        /**
+         * @brief Getter for the current position.
+         * @return Current position as Vector3d.
+         */
         [[nodiscard]] Vector3d getPosition() const override
         {
             return position;
         }
 
+        /**
+         * @brief Getter for the current velocity.
+         * @return Current velocity as Vector3d.
+         */
         [[nodiscard]] Vector3d getVelocity() const override
         {
             return velocity;
         }
 
+        /**
+         * @brief Setter for the velocity.
+         * @param v New velocity as Vector3d.
+         */
         void setVelocity(const Vector3d& v) override
         {
             velocity = v;
         }
 
+        /**
+         * @brief Getter for the particle mass.
+         * @return Particle mass as double.
+         */
         [[nodiscard]] double getMass() const override
         {
             return m_mass;
         }
 
+        /**
+         * @brief Getter for the particle charge.
+         * @return Particle charge as double.
+         */
         [[nodiscard]] double getCharge() const override
         {
             return m_charge;
         }
 
+        /**
+         * @brief Getter for the electric field model.
+         * @return Shared pointer to the electric field model.
+         */
         [[nodiscard]] std::shared_ptr<const IFieldModel> getFieldModel() const
         {
             return m_field;
         }
 
+        /**
+         * @brief Getter for the magnetic field model.
+         * @return Shared pointer to the magnetic field model.
+         */
         [[nodiscard]] std::shared_ptr<const IMagneticFieldModel> getMagFieldModel() const
         {
             return m_magfield;
         }
 
+        /**
+         * @brief Clone the particle model.
+         * @return Unique pointer to a new ParticleModelSFPS instance.
+         */
         [[nodiscard]] std::unique_ptr<IParticleModel> clone() const override
         {
             return std::make_unique<ParticleModelSFPS>(position, velocity, m_mass, m_charge, m_field, m_magfield);

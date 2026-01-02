@@ -1,35 +1,51 @@
 #pragma once
 #include "IReactionModel.h"
 #include "ParticleModelSFPS.h"
+#include "PhysicalConstants.h"
 #include <random>
 #include <cmath>
 
+/// @brief FusionSim - a simulator for FFR \namespace  fusion
 namespace fusion
 {
+    //// @brief Simulation of the DT Reaction. \class ReactionModelDT
     class ReactionModelDT : public IReactionModel
     {
     public:
+
+        /**
+         * @brief Getter for the cross section.
+         * @param energy_keV The energy in keV.
+         * @return A double represting the cross section.
+         */
         double getCrossSection(const double energy_keV) const override
         {
             if (energy_keV <= 0.0)
             {
                 return 0.0;
             }
-            constexpr double BG = 34.3827;
-            constexpr double A1 = 6.927e4;
-            constexpr double A2 = 7.454e8;
-            constexpr double A3 = 2.050e6;
-            constexpr double A4 = 5.2002e4;
-            constexpr double A5 = 0.0;
-            const double denom = 1.0 + (A2 + (A4 + A5 * energy_keV) * energy_keV) * energy_keV;
-            const double S = A1 + (A3 * energy_keV) / denom;
-            const double sigma = (S / (energy_keV * std::exp(BG / std::sqrt(energy_keV)))) * 1e-28;
-            return sigma;
+
+            using namespace constants::dt_reaction;
+
+            const double E = energy_keV;
+            const double denom = 1.0 + E * (A2 + E * (A4 + E * A5));
+            const double S = A1 + (A3 * E) / denom;
+            const double sigma_mb = S / (E * std::exp(BG / std::sqrt(E)));
+
+            return sigma_mb * constants::millibarn;
         }
 
-        std::vector<std::unique_ptr<IParticleModel>> react(const std::vector<std::unique_ptr<IParticleModel>>& reactants,
-                                                            std::shared_ptr<const IFieldModel> fieldModel,
-                                                            std::shared_ptr<const IMagneticFieldModel> magFieldModel) override
+        /**
+         * @brief Method to start reaction.
+         * @param reactants The particle model.
+         * @param fieldModel The field model.
+         * @param magFieldModel The magnetic field model.
+         * @return A vector of unqPtrs with the react.
+         */
+        std::vector<std::unique_ptr<IParticleModel>> react(
+            const std::vector<std::unique_ptr<IParticleModel>>& reactants,
+            std::shared_ptr<const IFieldModel> fieldModel,
+            std::shared_ptr<const IMagneticFieldModel> magFieldModel) override
         {
             std::vector<std::unique_ptr<IParticleModel>> products;
             if (reactants.size() < 2)
@@ -37,10 +53,11 @@ namespace fusion
                 return products;
             }
 
-            Vector3d pos = (reactants[0]->getPosition() + reactants[1]->getPosition()) * 0.5;
+            const Vector3d pos = (reactants[0]->getPosition() + reactants[1]->getPosition()) * 0.5;
 
-            std::uniform_real_distribution<double> phiDist(0, 2 * M_PI);
-            std::uniform_real_distribution<double> cosThetaDist(-1, 1);
+            std::uniform_real_distribution<> phiDist(0, 2 * constants::pi);
+            std::uniform_real_distribution<> cosThetaDist(-1, 1);
+
             const double theta = std::acos(cosThetaDist(m_rng));
             const double phival = phiDist(m_rng);
             const Vector3d dir1(
@@ -49,23 +66,22 @@ namespace fusion
                 std::cos(theta));
             const Vector3d dir2 = -dir1;
 
-            constexpr double neutronMass = 1.67492749804e-27;
-            constexpr double neutronEnergy = 14.1e6 * 1.60218e-19;
-            const double neutronSpeed = std::sqrt(2 * neutronEnergy / neutronMass);
+            constexpr double neutronEnergy = constants::dt_reaction::E_neutron * constants::MeVtoJoule;
+            const double neutronSpeed = std::sqrt(2.0 * neutronEnergy / constants::massNeutron);
 
-            constexpr double he4Mass = 6.646476e-27;
-            constexpr double he4Energy = 3.5e6 * 1.60218e-19;
-            const double he4Speed = std::sqrt(2 * he4Energy / he4Mass);
+            constexpr double he4Energy = constants::dt_reaction::E_He4 * constants::MeVtoJoule;
+            const double he4Speed = std::sqrt(2.0 * he4Energy / constants::massHe4);
 
-            constexpr double he4Charge = 2.0 * 1.60218e-19;
-
-            products.push_back(std::make_unique<ParticleModelSFPS>(pos, dir1 * neutronSpeed, neutronMass, 0.0, nullptr, nullptr));
-
-            products.push_back(std::make_unique<ParticleModelSFPS>(pos, dir2 * he4Speed, he4Mass, he4Charge, fieldModel, magFieldModel));
+            products.push_back(std::make_unique<ParticleModelSFPS>(pos, dir1 * neutronSpeed, constants::massNeutron, 0.0, nullptr, nullptr));
+            products.push_back(std::make_unique<ParticleModelSFPS>(pos, dir2 * he4Speed, constants::massHe4, 2.0 * constants::eCharge, fieldModel, magFieldModel));
 
             return products;
         }
 
+        /**
+         * @brief Getter for the Name of the react.
+         * @return A String represnting the name.
+         */
         std::string getName() const override
         {
             return "Deuterium-Tritium";
