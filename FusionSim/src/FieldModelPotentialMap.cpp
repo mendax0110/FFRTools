@@ -1,6 +1,6 @@
 #include "FieldModelPotentialMap.h"
 #include "Vector3dSimple.h"
-#include "Quantities.h"
+#include "../../SFPS/src/Quantities.h"
 
 using namespace fusion;
 
