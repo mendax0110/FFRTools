@@ -30,6 +30,7 @@ jobs:
             cmake \
             libboost-all-dev \
             libpng-dev \
+            libjpeg-dev \
             libomp-dev
 
       - name: Set up GCC
@@ -104,7 +105,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          brew install boost libpng libomp cmake
+          brew install boost libpng jpeg libomp cmake
 
       - name: Build SFPS
         run: |
@@ -164,20 +165,21 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Install Boost
-        uses: MarkusJx/install-boost@v2.4.5
-        id: install-boost
+      - name: Setup vcpkg
+        uses: lukka/run-vcpkg@v11
         with:
-          boost_version: 1.83.0
-          platform_version: 2022
-          toolset: msvc
+          vcpkgGitCommitId: 'c8696863d371ab7f46e213d8f5ca923c4aef2a00'
+
+      - name: Install dependencies with vcpkg
+        run: |
+          vcpkg install boost-gil boost-program-options boost-numeric-ublas
 
       - name: Configure and Build SFPS
         run: |
           cd SFPS
           mkdir build
           cd build
-          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DBOOST_ROOT=${{ steps.install-boost.outputs.BOOST_ROOT }}
+          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
           cmake --build . --config ${{ matrix.build_type }} --parallel
 
       - name: Configure and Build PotentialMap
@@ -185,7 +187,7 @@ jobs:
           cd PotentialMap
           mkdir build
           cd build
-          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DBOOST_ROOT=${{ steps.install-boost.outputs.BOOST_ROOT }}
+          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
           cmake --build . --config ${{ matrix.build_type }} --parallel
 
       - name: Configure and Build FusionSim
@@ -193,7 +195,7 @@ jobs:
           cd FusionSim/src
           mkdir build
           cd build
-          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DBOOST_ROOT=${{ steps.install-boost.outputs.BOOST_ROOT }}
+          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
           cmake --build . --config ${{ matrix.build_type }} --parallel
 
       - name: Upload SFPS artifact
