@@ -5,7 +5,7 @@
 #include <iostream>
 #include <exception>
 
-Configuration::Data Configuration::get_configuration(int argc, char* argv[])
+Configuration::Data Configuration::get_configuration(const int argc, char* argv[])
 {
     Data config;
 

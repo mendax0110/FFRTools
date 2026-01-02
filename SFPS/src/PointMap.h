@@ -3,11 +3,22 @@
 
 #include "Quantities.h"
 
+/// @brief Point Mapping Utilities. \class PointMap
 class PointMap
 {
 public:
-    PointMap(const Potential& p) : m_potential(p) {}
 
+    /**
+     * @brief Constructor for PointMap.
+     * @param p The electric potential.
+     */
+    explicit PointMap(const Potential& p) : m_potential(p) {}
+
+    /**
+     * @brief Overloaded function call operator to get electric field at a point.
+     * @param p The point in space.
+     * @return The electric field at the given point.
+     */
     VElectricField operator()(const VPoint& p)
     {
         VElectricField E = VElectricField::from(p, m_potential);

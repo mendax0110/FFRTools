@@ -13,12 +13,17 @@
 #include <fstream>
 #include <ctime>
 
+/// @brief Factory to generate random starting positions within a defined size. \class RandomPositionFactory
 class RandomPositionFactory
 {
 public:
-    RandomPositionFactory(const VPoint& s)
+    /**
+     * @brief Constructor for RandomPositionFactory.
+     * @param s The size defining the bounds for random position generation.
+     */
+    explicit RandomPositionFactory(const VPoint& s)
         :   size(s)
-        ,   seed( std::time(0) )
+        ,   seed( std::time(nullptr) )
         ,   gen_x(0, size.x.value)
         ,   gen_y(0, size.y.value)
         ,   gen_z(0, size.z.value)
@@ -28,6 +33,10 @@ public:
     {
     }
 
+    /**
+     * @brief Generate a random position within the defined size.
+     * @return A VPoint representing the random position.
+     */
     VPoint operator()()
     {
         return VPoint(v_x(), v_y(), v_z());
@@ -69,14 +78,14 @@ int main(int argc, char* argv[])
         proton_model_t particle(start);
         while_moving(start, particle, collision, field, config.max_length);
 
-        for(proton_model_t::point_list_t::const_iterator pos = particle.get_track().begin(); pos != particle.get_track().end(); pos++)
+        for(auto pos = particle.get_track().begin(); pos != particle.get_track().end(); ++pos)
         {
             std::cout << *pos << ",";
         }
 
         std::cout << "(end)\n";
 
-        for(proton_model_t::point_list_t::const_iterator pos = particle.get_track().begin(); pos != particle.get_track().end(); pos++)
+        for(auto pos = particle.get_track().begin(); pos != particle.get_track().end(); ++pos)
         {
             boost::filesystem::path p("positions.txt");
             std::ofstream ofs(p.string().c_str(), std::ios_base::app);

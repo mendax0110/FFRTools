@@ -3,9 +3,16 @@
 
 #include "Quantities.h"
 
+/// @brief Class Representing a Proton. \class Proton
 class Proton
 {
 public:
+    /**
+     * @brief Move the proton based on its current position and the electric field.
+     * @param p The current position.
+     * @param v The electric field at the current position.
+     * @return A new position after movement.
+     */
     VPoint move(const VPoint& p, const VElectricField& v);
 
 private:

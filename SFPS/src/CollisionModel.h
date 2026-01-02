@@ -10,12 +10,22 @@ class CollisionModel
 public:
     typedef Point point_t;
 
+    /**
+     * @brief Constructor for CollisionModel.
+     * @param area The size of the area.
+     * @param centre The size of the central solid area.
+     */
     CollisionModel(const point_t& area, const point_t& centre)
         :   m_area(area)
         ,   m_centre(centre)
     {
     }
 
+    /**
+     * @brief Check if a point collides with the solid area.
+     * @param p The point to check.
+     * @return True if the point collides, false otherwise.
+     */
     bool operator()(const point_t& p)
     {
         if((p.x.value >= m_area.x.value)
