@@ -125,7 +125,7 @@ void SimulationManager::run(const double t_max, const double dt)
 
 #ifdef USE_OPENMP
         #pragma omp parallel for schedule(static)
-        for (size_t i = 0; i < n; ++i)
+        for (long long i = 0; i < static_cast<long long>(n); ++i)
         {
             m_particles[i]->propagate(dt);
         }
@@ -153,10 +153,10 @@ void SimulationManager::run(const double t_max, const double dt)
                 auto& localParticles = threadLocalParticles[tid];
 
                 #pragma omp for schedule(static)
-                for (size_t k = 0; k < numPairs; ++k)
+                for (long long k = 0; k < static_cast<long long>(numPairs); ++k)
                 {
                     size_t i, j;
-                    indexToPair(k, n, i, j);
+                    indexToPair(static_cast<size_t>(k), n, i, j);
 
                     const Vector3d dr = m_particles[i]->getPosition() - m_particles[j]->getPosition();
                     const double distance = dr.norm();
