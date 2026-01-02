@@ -88,25 +88,36 @@ int8_t ColouriserCreator::toRed(const double magnitude, const double limit)
 	return value;
 }
 
-void ColouriserCreator::RgbToHls(const double r, const double g,  const double b,double &h, double &l, double s)
+void ColouriserCreator::RgbToHls(const double r, const double g, const double b, double &h, double &l, double &s)
 {
-	// Get the maximum and minimum RGB components.
-    double maxVal = r;
-    if(maxVal < g) maxVal = g;
-    if(maxVal < b) maxVal = b;
+	double maxVal = r;
+    if(maxVal < g)
+	{
+		maxVal = g;
+	}
+    if(maxVal < b)
+	{
+		maxVal = b;
+	}
 
     double minVal = r;
-    if(minVal > g) minVal = g;
-    if(minVal > b) minVal = b;
+    if(minVal > g)
+	{
+		minVal = g;
+	}
+    if(minVal > b)
+	{
+		minVal = b;
+	}
 
     const double diff = maxVal - minVal;
-    l = (maxVal + minVal) / 2;
-	
+    l = (maxVal + minVal) / 2.0;
+
 	const double aDiff = (diff < 0.0) ? -diff : diff;
     if(aDiff < 0.00001)
 	{
-        s = 0;
-        h = 0;
+        s = 0.0;
+        h = 0.0;
 	}
 	else
 	{
@@ -116,7 +127,7 @@ void ColouriserCreator::RgbToHls(const double r, const double g,  const double b
 		}
         else
         {
-			s = diff / (2 - maxVal - minVal);
+			s = diff / (2.0 - maxVal - minVal);
 		}
 
         const double r_dist = (maxVal - r) / diff;
@@ -129,17 +140,17 @@ void ColouriserCreator::RgbToHls(const double r, const double g,  const double b
 		}
         else if(g == maxVal)
 		{
-            h = 2 + r_dist - b_dist;
+            h = 2.0 + r_dist - b_dist;
 		}
 		else
 		{
-            h = 4 + g_dist - r_dist;
+            h = 4.0 + g_dist - r_dist;
 		}
 
-        h = h * 60;
-        if(h < 0)
+        h = h * 60.0;
+        if(h < 0.0)
 		{
-			h = h + 360;
+			h = h + 360.0;
 		}
 	}
 }
@@ -151,15 +162,15 @@ void ColouriserCreator::HlsToRgb(const double h, const double l, const double s,
 
     if(l <= 0.5)
 	{
-        p2 = l * (1 + s);
+        p2 = l * (1.0 + s);
     }
 	else
 	{
         p2 = l + s - l * s;
 	}
-	
-    const double p1 = 2 * l - p2;
-    if(s == 0)
+
+    const double p1 = 2.0 * l - p2;
+    if(s == 0.0)
 	{
         r = l;
         g = l;
@@ -167,11 +178,11 @@ void ColouriserCreator::HlsToRgb(const double h, const double l, const double s,
 	}
 	else
 	{
-        r = QqhToRgb(p1, p2, h + 120);
+        r = QqhToRgb(p1, p2, h + 120.0);
         g = QqhToRgb(p1, p2, h);
-        b = QqhToRgb(p1, p2, h - 120);
+        b = QqhToRgb(p1, p2, h - 120.0);
     }
-	
+
 	red = static_cast< int8_t >(r * std::numeric_limits< int8_t >::max());
 	green = static_cast< int8_t >(g * std::numeric_limits< int8_t >::max());
 	blue = static_cast< int8_t >(b * std::numeric_limits< int8_t >::max());
@@ -179,26 +190,26 @@ void ColouriserCreator::HlsToRgb(const double h, const double l, const double s,
 
 double ColouriserCreator::QqhToRgb(const double q1, const double q2, double hue)
 {
-    if(hue > 360)
+    if(hue > 360.0)
 	{
-        hue = hue - 360;
+        hue = hue - 360.0;
     }
-	else if(hue < 0)
+	else if(hue < 0.0)
 	{
-        hue = hue + 360;
+        hue = hue + 360.0;
     }
-	
-    if(hue < 60)
+
+    if(hue < 60.0)
 	{
-        return q1 + (q2 - q1) * hue / 60;
+        return q1 + (q2 - q1) * hue / 60.0;
 	}
-    else if(hue < 180)
+    else if(hue < 180.0)
 	{
         return q2;
 	}
-    else if(hue < 240)
+    else if(hue < 240.0)
 	{
-        return q1 + (q2 - q1) * (240 - hue) / 60;
+        return q1 + (q2 - q1) * (240.0 - hue) / 60.0;
     }
 	else
 	{

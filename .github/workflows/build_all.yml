@@ -168,11 +168,12 @@ jobs:
       - name: Setup vcpkg
         uses: lukka/run-vcpkg@v11
         with:
-          vcpkgGitCommitId: 'c8696863d371ab7f46e213d8f5ca923c4aef2a00'
+          vcpkgGitCommitId: '2025.12.12'
 
       - name: Install dependencies with vcpkg
         run: |
           vcpkg install boost-gil boost-program-options boost-ublas libjpeg-turbo libpng
+        continue-on-error: false
 
       - name: Configure and Build SFPS
         run: |
