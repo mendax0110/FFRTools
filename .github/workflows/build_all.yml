@@ -172,7 +172,7 @@ jobs:
 
       - name: Install dependencies with vcpkg
         run: |
-          vcpkg install boost-gil boost-program-options boost-numeric-ublas
+          vcpkg install boost-gil boost-program-options
 
       - name: Configure and Build SFPS
         run: |
