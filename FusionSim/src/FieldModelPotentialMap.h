@@ -1,6 +1,6 @@
 #pragma once
 #include "IFieldModel.h"
-#include "PointMap.h"
+#include "../../SFPS/src/PointMap.h"
 
 /// @brief FusionSim - a simulator for FFR \namespace  fusion
 namespace fusion
