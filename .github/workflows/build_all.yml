@@ -172,7 +172,7 @@ jobs:
 
       - name: Install dependencies with vcpkg
         run: |
-          vcpkg install boost-gil boost-program-options boost-ublas libjpeg-turbo libpng
+          vcpkg install boost-gil boost-program-options boost-ublas boost-random boost-filesystem libjpeg-turbo libpng
         continue-on-error: false
 
       - name: Configure and Build SFPS
