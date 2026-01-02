@@ -63,7 +63,7 @@ jobs:
 
       - name: Build FusionSim
         run: |
-          cd FusionSim/src
+          cd FusionSim
           mkdir -p build
           cd build
           cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
@@ -87,7 +87,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: FusionSim-${{ matrix.compiler }}-${{ matrix.build_type }}-linux
-          path: FusionSim/src/build/FusionSim
+          path: FusionSim/build/src/FusionSim
           if-no-files-found: ignore
 
   build-macos:
@@ -125,7 +125,7 @@ jobs:
 
       - name: Build FusionSim
         run: |
-          cd FusionSim/src
+          cd FusionSim
           mkdir -p build
           cd build
           cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
@@ -149,7 +149,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: FusionSim-${{ matrix.build_type }}-macos
-          path: FusionSim/src/build/FusionSim
+          path: FusionSim/build/src/FusionSim
           if-no-files-found: ignore
 
   build-windows:
@@ -192,7 +192,7 @@ jobs:
 
       - name: Configure and Build FusionSim
         run: |
-          cd FusionSim/src
+          cd FusionSim
           mkdir build
           cd build
           cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
@@ -216,5 +216,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: FusionSim-${{ matrix.build_type }}-windows
-          path: FusionSim/src/build/${{ matrix.build_type }}/FusionSim.exe
+          path: FusionSim/build/src/${{ matrix.build_type }}/FusionSim.exe
           if-no-files-found: ignore
