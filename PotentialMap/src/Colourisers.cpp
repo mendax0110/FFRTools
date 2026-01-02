@@ -1,5 +1,12 @@
+#define _USE_MATH_DEFINES
 #include "Colourisers.h"
+#include <cmath>
 #include <limits>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 using namespace Colourisers;
 
 
@@ -22,9 +29,9 @@ void ColouriserCreator::colourise(const double magnitude, const double limit, in
 
 void ColouriserCreator::colourise(const double magnitude, const double limit, int8_t &red, int8_t &green, int8_t &blue)
 {
-	double normalised = magnitude / limit;
+	const double normalised = magnitude / limit;
 	
-	const double sensitivity = 0.1;
+	constexpr double sensitivity = 0.1;
 	
 	if(normalised > sensitivity)
 	{
@@ -50,7 +57,7 @@ int8_t ColouriserCreator::toBlue(const double magnitude, const double limit)
 	normalised = std::max(normalised, 0.0);
 	normalised = std::min(normalised, 1.0);
 	
-	int8_t value = static_cast< int8_t >(normalised * std::numeric_limits< int8_t >::max());
+	const int8_t value = static_cast< int8_t >(normalised * std::numeric_limits< int8_t >::max());
 	return value;
 }
 
@@ -64,7 +71,7 @@ int8_t ColouriserCreator::toGreen(const double magnitude, const double limit)
 	normalised = std::max(normalised, 0.0);
 	normalised = std::min(normalised, 1.0);
 	
-	int8_t value = static_cast< int8_t >(normalised * std::numeric_limits< int8_t >::max());
+	const int8_t value = static_cast< int8_t >(normalised * std::numeric_limits< int8_t >::max());
 	return value;
 }
 
@@ -78,32 +85,25 @@ int8_t ColouriserCreator::toRed(const double magnitude, const double limit)
 	normalised = std::max(normalised, 0.0);
 	normalised = std::min(normalised, 1.0);
 
-	int8_t value = static_cast< int8_t >(normalised * std::numeric_limits< int8_t >::max());
+	const int8_t value = static_cast< int8_t >(normalised * std::numeric_limits< int8_t >::max());
 	return value;
 }
 
-void ColouriserCreator::RgbToHls(double r, double g,  double b,double &h, double &l, double s)
+void ColouriserCreator::RgbToHls(const double r, const double g,  const double b,double &h, double &l, double s)
 {
-	double maxVal;
-	double minVal;
-	double diff;
-	double r_dist;
-	double g_dist;
-	double b_dist;
-
-    // Get the maximum and minimum RGB components.
-    maxVal = r;
+	// Get the maximum and minimum RGB components.
+    double maxVal = r;
     if(maxVal < g) maxVal = g;
     if(maxVal < b) maxVal = b;
 
-    minVal = r;
+    double minVal = r;
     if(minVal > g) minVal = g;
     if(minVal > b) minVal = b;
 
-    diff = maxVal - minVal;
+    const double diff = maxVal - minVal;
     l = (maxVal + minVal) / 2;
 	
-	double aDiff = (diff < 0.0) ? -diff : diff;
+	const double aDiff = (diff < 0.0) ? -diff : diff;
     if(aDiff < 0.00001)
 	{
         s = 0;
@@ -111,7 +111,7 @@ void ColouriserCreator::RgbToHls(double r, double g,  double b,double &h, double
 	}
 	else
 	{
-        if(l <= 0.5)
+		if(l <= 0.5)
 		{
             s = diff / (maxVal + minVal);
 		}
@@ -120,9 +120,9 @@ void ColouriserCreator::RgbToHls(double r, double g,  double b,double &h, double
 			s = diff / (2 - maxVal - minVal);
 		}
 
-        r_dist = (maxVal - r) / diff;
-        g_dist = (maxVal - g) / diff;
-        b_dist = (maxVal - b) / diff;
+        const double r_dist = (maxVal - r) / diff;
+        const double g_dist = (maxVal - g) / diff;
+        const double b_dist = (maxVal - b) / diff;
 
         if(r == maxVal)
 		{
@@ -145,11 +145,9 @@ void ColouriserCreator::RgbToHls(double r, double g,  double b,double &h, double
 	}
 }
 
-void ColouriserCreator::HlsToRgb(double h, double l, double s, int8_t &red, int8_t &green, int8_t &blue)
+void ColouriserCreator::HlsToRgb(const double h, const double l, const double s, int8_t &red, int8_t &green, int8_t &blue)
 {
-	double p1;
 	double p2;
-	
 	double r, g, b;
 
     if(l <= 0.5)
@@ -161,7 +159,7 @@ void ColouriserCreator::HlsToRgb(double h, double l, double s, int8_t &red, int8
         p2 = l + s - l * s;
 	}
 	
-    p1 = 2 * l - p2;
+    const double p1 = 2 * l - p2;
     if(s == 0)
 	{
         r = l;
@@ -180,7 +178,7 @@ void ColouriserCreator::HlsToRgb(double h, double l, double s, int8_t &red, int8
 	blue = static_cast< int8_t >(b * std::numeric_limits< int8_t >::max());
 }
 
-double ColouriserCreator::QqhToRgb(double q1, double q2, double hue)
+double ColouriserCreator::QqhToRgb(const double q1, const double q2, double hue)
 {
     if(hue > 360)
 	{

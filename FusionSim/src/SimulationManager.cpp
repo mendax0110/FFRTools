@@ -1,5 +1,6 @@
 #include "SimulationManager.h"
 #include "PhysicalConstants.h"
+#include "FarnsworthFusorFieldModel.h"
 #include <cmath>
 #include <iostream>
 #include <mutex>
@@ -82,6 +83,8 @@ void SimulationManager::run(const double t_max, const double dt)
     m_reactionCount = 0;
     size_t step = 0;
 
+    auto* fusorField = dynamic_cast<fusion::FarnsworthFusorFieldModel*>(m_fieldModel.get());
+
 #ifdef USE_OPENMP
     std::cout << "Running with " << m_numThreads << " OpenMP threads" << std::endl;
 
@@ -97,6 +100,28 @@ void SimulationManager::run(const double t_max, const double dt)
     while (t < t_max)
     {
         const size_t n = m_particles.size();
+
+        if (fusorField && step % 10000 == 0 && step > 0)
+        {
+            double avgKineticEnergy = 0.0;
+            for (const auto& p : m_particles)
+            {
+                double v2 = p->getVelocity().squaredNorm();
+                avgKineticEnergy += 0.5 * p->getMass() * v2;
+            }
+            avgKineticEnergy /= static_cast<double>(n);
+
+            double estimatedGridTemp = 293.15 + (avgKineticEnergy / constants::kBoltzmann) * 0.001;
+            double estimatedChamberTemp = 293.15 + (avgKineticEnergy / constants::kBoltzmann) * 0.0001;
+
+            fusorField->setGridTemperature(estimatedGridTemp);
+            fusorField->setChamberTemperature(estimatedChamberTemp);
+
+            if (!fusorField->isGridTemperatureSafe())
+            {
+                std::cout << "\\nWarning: Grid temperature exceeds safe limit!" << std::endl;
+            }
+        }
 
 #ifdef USE_OPENMP
         #pragma omp parallel for schedule(static)

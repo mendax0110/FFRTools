@@ -3,13 +3,13 @@
 using namespace GeneralEE;
 using namespace std;
 
-void ElectricalEngineering::drawLine(gil::rgb8_view_t img, int x1, int y1, int x2, int y2, gil::rgb8_pixel_t color)
+void ElectricalEngineering::drawLine(const gil::rgb8_view_t& img, int x1, int y1, const int x2, const int y2, const gil::rgb8_pixel_t& color)
 {
     // simple bresenhams line algorithm implementation
-    int dx = abs(x2 - x1);
-    int dy = abs(y2 - y1);
-    int sx = (x1 < x2) ? 1 : -1;
-    int sy = (y1 < y2) ? 1 : -1;
+    const int dx = abs(x2 - x1);
+    const int dy = abs(y2 - y1);
+    const int sx = (x1 < x2) ? 1 : -1;
+    const int sy = (y1 < y2) ? 1 : -1;
     int err = dx - dy;
 
     while (true)
@@ -19,7 +19,7 @@ void ElectricalEngineering::drawLine(gil::rgb8_view_t img, int x1, int y1, int x
         if ((x1 == x2) && (y1 == y2))
             break;
 
-        int e2 = 2 * err;
+        const int e2 = 2 * err;
         if (e2 > -dy)
         {
             err -= dy;
@@ -131,21 +131,26 @@ void HighVoltagePowerSupply::displayOutput() const
     file << "----------------------------------------------------" << endl;
 }
 
-FusionRate::FusionRate(double pressure, double temperature, double current, double recirculation, double meanVelocity, double gamma, double fusionReactivity)
-    : pressure_(pressure), temperature_(temperature), current_(current), recirculation_(recirculation), meanVelocity_(meanVelocity), gamma_(gamma), fusionReactivity_(fusionReactivity)
+FusionRate::FusionRate(const double pressure, const double temperature, const double current, const double recirculation, const double meanVelocity, const double gamma, const double fusionReactivity)
+    : pressure_(pressure)
+    , temperature_(temperature)
+    , current_(current)
+    , recirculation_(recirculation)
+    , meanVelocity_(meanVelocity)
+    , gamma_(gamma)
+    , fusionReactivity_(fusionReactivity)
 {
 }
 
-double FusionRate::calculateFusionRate()
+double FusionRate::calculateFusionRate() const
 {
     double volume = 4.0 * M_PI * pow(recirculation_, 2) * current_ / (1.0 + gamma_);
-    double fusionRate = pressure_ / (BoltzmannConstant * temperature_) * current_ / ((1.0 + gamma_) * exp(1.0) * 2.0 * recirculation_ * fusionReactivity_ / meanVelocity_);
-    
+    const double fusionRate = pressure_ / (BoltzmannConstant * temperature_) * current_ / ((1.0 + gamma_) * exp(1.0) * 2.0 * recirculation_ * fusionReactivity_ / meanVelocity_);
     return fusionRate;
 }
 
-double FusionRate::calculateNeutronProductionRate()
+double FusionRate::calculateNeutronProductionRate() const
 {
-    double neutronProductionRate = 2.0 * calculateFusionRate();
+    const double neutronProductionRate = 2.0 * calculateFusionRate();
     return neutronProductionRate;
 }

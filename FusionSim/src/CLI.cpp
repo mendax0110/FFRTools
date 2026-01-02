@@ -33,7 +33,7 @@ int CLI::run(const int argc, char* argv[])
                   << "  --pressure <P>   Chamber pressure [mbar] (default: 0.2)\n"
                   << "  --threads <n>    Number of CPU threads (default: all available)\n";
         return 0;
-        // ./FusionSim --fusor --dd --particles 1000 --tmax 1e-6 --timestep 1e-11 --pressure 0.2
+        // ./FusionSim --fusor --dd --particles 1000 --tmax 1e-6 --timestep 1e-11 --voltage -30000 --pressure 0.023 --temperature 10000
     }
 
     double tmax = 1.0e-6;
@@ -121,29 +121,102 @@ int CLI::run(const int argc, char* argv[])
 
     if (fusorMode)
     {
-        constexpr double innerGridRadius = 0.016;
-        constexpr double outerGridRadius = 0.08;
+        constexpr double innerGridRadius = 0.008;
+        constexpr double outerGridRadius = 0.04;
+        constexpr double gridTransparency = 0.95;
+        constexpr double wireDiameter = 0.001;
+        constexpr int innerWireCount = 12;
+        constexpr int outerWireCount = 16;
+
         fusorField = std::make_shared<FarnsworthFusorFieldModel>(
-            innerGridRadius, outerGridRadius, cathodeVoltage);
+            innerGridRadius,
+            outerGridRadius,
+            cathodeVoltage,
+            gridTransparency,
+            wireDiameter,
+            innerWireCount,
+            outerWireCount,
+            GridType::ROSENSTIEHL_SPHERICAL);
         fieldModel = fusorField;
 
-        std::cout << "Farnsworth Fusor configuration:" << std::endl;
+        double pressure_Pa_local = pressure_mbar * 100.0;
+        fusorField->setOperatingPressure(pressure_Pa_local);
+        fusorField->setGridTemperature(293.15);
+        fusorField->setChamberTemperature(293.15);
+
+        std::cout << "\n=== Farnsworth Fusor Configuration ===" << std::endl;
+        std::cout << "Grid Geometry:" << std::endl;
         std::cout << "  Inner grid (cathode) radius: " << innerGridRadius * 100.0 << " cm" << std::endl;
         std::cout << "  Outer grid (anode) radius: " << outerGridRadius * 100.0 << " cm" << std::endl;
-        std::cout << "  Cathode voltage: " << cathodeVoltage / 1000.0 << " kV" << std::endl;
+        std::cout << "  Wire diameter: " << wireDiameter * 1000.0 << " mm" << std::endl;
+        std::cout << "  Inner grid wire count: " << innerWireCount << std::endl;
+        std::cout << "  Outer grid wire count: " << outerWireCount << std::endl;
+        std::cout << "  Grid type: Rosenstiehl Spherical" << std::endl;
+        std::cout << "  Nominal transparency: " << gridTransparency * 100.0 << " %" << std::endl;
+        std::cout << "  Effective transparency: " << fusorField->calculateEffectiveTransparency() * 100.0 << " %" << std::endl;
 
+        std::cout << "\nElectrical Parameters:" << std::endl;
+        std::cout << "  Cathode voltage: " << cathodeVoltage / 1000.0 << " kV" << std::endl;
+        std::cout << "  Resonant frequency: " << fusorField->getResonantFrequency() / 1000.0 << " kHz" << std::endl;
+        std::cout << "  Peak-to-peak current: " << fusorField->getPeakToPeakCurrent() << " A" << std::endl;
+
+        std::cout << "\nIon Dynamics:" << std::endl;
         double maxEnergy_eV = fusorField->getMaxIonEnergy() / constants::eCharge;
         double maxSpeed = fusorField->getMaxIonSpeed();
         std::cout << "  Max ion energy: " << maxEnergy_eV / 1000.0 << " keV" << std::endl;
         std::cout << "  Max ion speed: " << maxSpeed / 1000.0 << " km/s" << std::endl;
-
         double oscillationPeriod = fusorField->getOscillationPeriod();
         std::cout << "  Ion oscillation period: " << oscillationPeriod * 1.0e9 << " ns" << std::endl;
+        double oscillationFreq = 1.0 / oscillationPeriod;
+        std::cout << "  Ion oscillation frequency: " << oscillationFreq / 1000.0 << " kHz" << std::endl;
 
+        std::cout << "\nResonant Circuit:" << std::endl;
+        double t_sample = 0.0;
+        double current_t0 = fusorField->calculateResonantCurrent(t_sample);
+        double current_t1 = fusorField->calculateResonantCurrent(0.25 / fusorField->getResonantFrequency());
+        std::cout << "  Current at t=0: " << current_t0 << " A" << std::endl;
+        std::cout << "  Current at T/4: " << current_t1 << " A" << std::endl;
+
+        std::cout << "\nVacuum and Breakdown:" << std::endl;
         double gap = outerGridRadius - innerGridRadius;
-        double pressure_Pa_local = pressure_mbar * 100.0;
         double V_paschen = FarnsworthFusorFieldModel::calculatePaschenBreakdown(pressure_Pa_local, gap);
+        std::cout << "  Electrode gap: " << gap * 100.0 << " cm" << std::endl;
         std::cout << "  Paschen breakdown voltage: " << V_paschen / 1000.0 << " kV" << std::endl;
+
+        std::cout << "\nCollision Physics:" << std::endl;
+        double meanFreePath = FarnsworthFusorFieldModel::calculateMeanFreePath(pressure_Pa_local, temperature);
+        std::cout << "  Mean free path: " << meanFreePath * 1000.0 << " mm" << std::endl;
+        double ionCrossSection = FarnsworthFusorFieldModel::calculateIonizationCrossSection(maxEnergy_eV);
+        std::cout << "  Ionization cross-section at max energy: " << ionCrossSection / 1.0e-20 << " × 10⁻²⁰ m²" << std::endl;
+
+        std::cout << "\nOperating Mode:" << std::endl;
+        double testCurrent = 0.05;
+        OperatingMode opMode = fusorField->determineOperatingMode(testCurrent);
+        std::cout << "  Pressure: " << pressure_mbar << " mbar" << std::endl;
+        std::cout << "  Current: " << testCurrent << " A" << std::endl;
+        std::cout << "  Mode: ";
+        switch (opMode)
+        {
+            case OperatingMode::VACUUM_PUMPING:
+                std::cout << "VACUUM_PUMPING" << std::endl;
+                break;
+            case OperatingMode::PLASMA_IGNITION:
+                std::cout << "PLASMA_IGNITION" << std::endl;
+                break;
+            case OperatingMode::STABLE_OPERATION:
+                std::cout << "STABLE_OPERATION" << std::endl;
+                break;
+            case OperatingMode::STAR_MODE:
+                std::cout << "STAR_MODE" << std::endl;
+                break;
+        }
+
+        std::cout << "\nThermal Status:" << std::endl;
+        std::cout << "  Grid temperature: " << fusorField->getGridTemperature() << " K" << std::endl;
+        std::cout << "  Chamber temperature: " << fusorField->getChamberTemperature() << " K" << std::endl;
+        std::cout << "  Grid temp safe: " << (fusorField->isGridTemperatureSafe() ? "Yes" : "No") << std::endl;
+        std::cout << "  Chamber temp safe: " << (fusorField->isChamberTemperatureSafe() ? "Yes" : "No") << std::endl;
+        std::cout << "===================================\n" << std::endl;
     }
     else
     {
@@ -161,9 +234,11 @@ int CLI::run(const int argc, char* argv[])
     std::cout << "Chamber pressure: " << pressure_mbar << " mbar (" << pressure_Pa << " Pa)" << std::endl;
     std::cout << "Particle density: " << particleDensity << " m^-3" << std::endl;
 
-    constexpr double deuteriumCrossSection = 4.0e-20;
-    double meanFreePath = 1.0 / (particleDensity * deuteriumCrossSection);
-    std::cout << "Mean free path: " << meanFreePath * 1000.0 << " mm" << std::endl;
+    if (!fusorMode)
+    {
+        double meanFreePathCalc = FarnsworthFusorFieldModel::calculateMeanFreePath(pressure_Pa, temperature);
+        std::cout << "Mean free path: " << meanFreePathCalc * 1000.0 << " mm" << std::endl;
+    }
 
     if (fusorMode && fusorField)
     {

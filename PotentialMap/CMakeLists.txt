@@ -1,7 +1,12 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 project(PotentialMap)
 
 set(CMAKE_CXX_STANDARD 17)
+
+if(MSVC)
+    add_compile_definitions(_USE_MATH_DEFINES)
+    add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+endif()
 
 # Library source files (without main.cpp)
 set(LIB_SOURCE_FILES
@@ -21,9 +26,10 @@ set(SOURCE_FILES
 )
 
 if(WIN32)
-    set(CMAKE_CXX_STANDARD 11)
-    set(BOOST_ROOT "C:/boost_1_82_0")
+    set(CMAKE_CXX_STANDARD 17)
     find_package(Boost 1.82.0 REQUIRED)
+    find_package(JPEG QUIET)
+    find_package(PNG QUIET)
 elseif(APPLE)
     set(CMAKE_CXX_STANDARD 14)
     find_package(Boost 1.70 REQUIRED)
@@ -39,8 +45,12 @@ endif()
 
 if(Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
-    include_directories(${JPEG_INCLUDE_DIRS})
-    include_directories(${PNG_INCLUDE_DIRS})
+    if(JPEG_FOUND)
+        include_directories(${JPEG_INCLUDE_DIRS})
+    endif()
+    if(PNG_FOUND)
+        include_directories(${PNG_INCLUDE_DIRS})
+    endif()
 
     # Create LIBRARY target (for linking into other projects)
     add_library(${PROJECT_NAME} STATIC ${LIB_SOURCE_FILES})
@@ -48,17 +58,23 @@ if(Boost_FOUND)
     target_link_libraries(${PROJECT_NAME}
             PUBLIC
             ${Boost_LIBRARIES}
-            ${JPEG_LIBRARIES}
-            ${PNG_LIBRARIES}
     )
+    if(JPEG_FOUND)
+        target_link_libraries(${PROJECT_NAME} PUBLIC ${JPEG_LIBRARIES})
+    endif()
+    if(PNG_FOUND)
+        target_link_libraries(${PROJECT_NAME} PUBLIC ${PNG_LIBRARIES})
+    endif()
 
     # Create EXECUTABLE target (standalone program)
     add_executable(${PROJECT_NAME}_exe ${SOURCE_FILES})
-    target_link_libraries(${PROJECT_NAME}_exe
-            ${Boost_LIBRARIES}
-            ${JPEG_LIBRARIES}
-            ${PNG_LIBRARIES}
-    )
+    target_link_libraries(${PROJECT_NAME}_exe ${Boost_LIBRARIES})
+    if(JPEG_FOUND)
+        target_link_libraries(${PROJECT_NAME}_exe ${JPEG_LIBRARIES})
+    endif()
+    if(PNG_FOUND)
+        target_link_libraries(${PROJECT_NAME}_exe ${PNG_LIBRARIES})
+    endif()
 
 else()
     message(FATAL_ERROR "Boost not found. Please set BOOST_ROOT correctly.")
@@ -80,10 +96,11 @@ endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
 
-# Alternative build target
 add_executable(Build_${PROJECT_NAME} ${SOURCE_FILES})
-target_link_libraries(Build_${PROJECT_NAME}
-        ${Boost_LIBRARIES}
-        ${JPEG_LIBRARIES}
-        ${PNG_LIBRARIES}
-)
+target_link_libraries(Build_${PROJECT_NAME} ${Boost_LIBRARIES})
+if(JPEG_FOUND)
+    target_link_libraries(Build_${PROJECT_NAME} ${JPEG_LIBRARIES})
+endif()
+if(PNG_FOUND)
+    target_link_libraries(Build_${PROJECT_NAME} ${PNG_LIBRARIES})
+endif()

@@ -80,7 +80,7 @@ double PotentialCalulator::calcPotentialAtPoint(const double x, const double y, 
 	
 	// for each of those, find the smallest distance
 	const double min_dist = std::min(ns_dist, std::min(ew_dist, lat_dist));
-	double potential = kV / min_dist;
+	const double potential = kV / min_dist;
 	
 	return static_cast< double >(potential);
 }
