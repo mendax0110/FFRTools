@@ -31,6 +31,8 @@ namespace fusion
         constexpr double barn = 1.0e-28;
         constexpr double millibarn = 1.0e-31;
 
+        constexpr double stefanBoltzmann = 5.670374419e-8;
+
         /// @brief Constants for the DD reactions. \namespace  dd_reaction
         namespace dd_reaction
         {

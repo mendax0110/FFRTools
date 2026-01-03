@@ -31,7 +31,8 @@ int CLI::run(const int argc, char* argv[])
                   << "  --temperature <T> Ion temperature [K] (default: 1e4)\n"
                   << "  --voltage <V>    Cathode voltage [V] for fusor (default: -30000)\n"
                   << "  --pressure <P>   Chamber pressure [mbar] (default: 0.2)\n"
-                  << "  --threads <n>    Number of CPU threads (default: all available)\n";
+                  << "  --threads <n>    Number of CPU threads (default: all available)\n"
+                  << "  --thermal       Enable thermal dynamics model\n";
         return 0;
         // ./FusionSim --fusor --dd --particles 1000 --tmax 1e-6 --timestep 1e-11 --voltage -30000 --pressure 0.023 --temperature 10000
     }
@@ -45,6 +46,7 @@ int CLI::run(const int argc, char* argv[])
     int numThreads = 0;
     std::string mode = "dd";
     bool fusorMode = false;
+    bool enableThermalDynamics = false;
 
     for (int i = 1; i < argc; ++i)
     {
@@ -89,6 +91,10 @@ int CLI::run(const int argc, char* argv[])
         {
             numThreads = std::stoi(argv[++i]);
         }
+        else if (arg == "--thermal")
+        {
+            enableThermalDynamics = true;
+        }
     }
 
     if (timestep <= 0.0)
@@ -114,6 +120,16 @@ int CLI::run(const int argc, char* argv[])
     if (numThreads > 0)
     {
         sim.setNumThreads(numThreads);
+    }
+
+    if (enableThermalDynamics)
+    {
+        sim.enableThermalDynamics(true);
+        std::cout << "Thermal dynamics model enabled.\n";
+    }
+    else
+    {
+        std::cerr << "Thermal dynamics model disabled.\n";
     }
 
     std::shared_ptr<IFieldModel> fieldModel;

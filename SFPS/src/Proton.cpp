@@ -14,9 +14,9 @@ VPoint Proton::move(const VPoint& p, const VElectricField& v)
     // F=mA->A=F/m
     // D=V1*t + 0.5*A*t*t
 
-    VForce F = VForce::from(v, m_charge);
+    const VForce F = VForce::from(v, m_charge);
 
-    VAcceleration a(
+    const VAcceleration a(
         Acceleration::from(F.x, m_mass),
         Acceleration::from(F.y, m_mass),
         Acceleration::from(F.z, m_mass));

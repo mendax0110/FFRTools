@@ -80,8 +80,8 @@ namespace fusion
             , m_operatingPressure(defaultOperatingPressure)
             , m_gridTempLimit(defaultGridTempLimit)
             , m_chamberTempLimit(defaultChamberTempLimit)
-            , m_currentGridTemp(293.15)
-            , m_currentChamberTemp(293.15)
+            , m_currentGridTemp(28.00)
+            , m_currentChamberTemp(25.00)
             , m_geometryFactor(calculateGeometryFactor())
         {
         }
@@ -119,8 +119,8 @@ namespace fusion
             , m_operatingPressure(defaultOperatingPressure)
             , m_gridTempLimit(defaultGridTempLimit)
             , m_chamberTempLimit(defaultChamberTempLimit)
-            , m_currentGridTemp(293.15)
-            , m_currentChamberTemp(293.15)
+            , m_currentGridTemp(28.00)
+            , m_currentChamberTemp(25.00)
             , m_geometryFactor(calculateGeometryFactor())
         {
         }

@@ -38,6 +38,7 @@ set(SIM_SRC
         IReactionModel.h
         PhysicalConstants.h
         Vector3dSimple.h
+        ThermalDynamicsModel.h
 )
 
 add_executable(FusionSim ${SIM_SRC})

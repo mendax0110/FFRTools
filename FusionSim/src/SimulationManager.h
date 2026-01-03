@@ -7,6 +7,7 @@
 #include "IMagneticFieldModel.h"
 #include "IReactionModel.h"
 #include "IParticleModel.h"
+#include "ThermalDynamicsModel.h"
 
 #ifdef USE_OPENMP
 #include <omp.h>
@@ -103,6 +104,32 @@ namespace fusion
          */
         [[nodiscard]] int getNumThreads() const;
 
+        /**
+         * @brief Enable or disable thermal dynamics.
+         * @param enable True to enable, false to disable.
+         */
+        void enableThermalDynamics(bool enable);
+
+        /**
+         * @brief Getter for the thermal dynamics model.
+         * @return Pointer to the thermal dynamics model.
+         */
+        [[nodiscard]] ThermalDynamicsModel* getThermalModel() const;
+
+        /**
+         * @brief Process a pair of particles for potential reactions.
+         * @tparam RNG The type of random number generator.
+         * @tparam OutputIt The type of output iterator.
+         * @param i Index of the first particle.
+         * @param j Index of the second particle.
+         * @param dt Time step.
+         * @param rng Random number generator.
+         * @param out Output iterator to store new particles.
+         */
+        template <typename RNG, typename OutputIt>
+        void processPair(size_t i, size_t j, double dt, RNG& rng, OutputIt out);
+
+
     private:
         std::shared_ptr<IFieldModel> m_fieldModel;
         std::shared_ptr<IMagneticFieldModel> m_magFieldModel;
@@ -113,5 +140,7 @@ namespace fusion
         double m_collisionRadius;
         std::atomic<size_t> m_reactionCount;
         int m_numThreads;
+        std::unique_ptr<ThermalDynamicsModel> m_thermalModel;
+        bool m_enableThermalDynamics;
     };
 }
