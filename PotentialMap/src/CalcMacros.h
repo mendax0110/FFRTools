@@ -6,7 +6,6 @@
 #include <algorithm>
 #include <vector>
 #include <cmath>
-#include <math.h>
 #include <limits>
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/io.hpp>
@@ -19,37 +18,37 @@
 /*
  * @brief The macro for the electric constant (epsilon_0) in SI units
  */
-#define k_Macro 8.9875517873681764 * pow(10, 9)
+#define k_Macro (8.9875517873681764 * pow(10, 9))
 
 /*
  * @brief The macro for the electric constant (epsilon_0) in SI units
  */
-#define kV_Macro 8.9875517873681764 * pow(10, 3)
+#define kV_Macro (8.9875517873681764 * pow(10, 3))
 
 /*
  * @brief The macro for coulombs constant (C) in SI units
  */
-#define C_Macro 1.602176487 * pow(10, -19)
+#define C_Macro (1.602176487 * pow(10, -19))
 
 /*
  * @brief The macro for the mass of an electron (m_e) in SI units
  */
-#define m_e_Macro 9.10938215 * pow(10, -31)
+#define m_e_Macro (9.10938215 * pow(10, -31))
 
 /*
  * @brief The macro for the mass of a proton (m_p) in SI units
  */
-#define m_p_Macro 1.672621637 * pow(10, -27)
+#define m_p_Macro (1.672621637 * pow(10, -27))
 
 /*
  * @brief The macro for the mass of a neutron (m_n) in SI units
  */
-#define m_n_Macro 1.674927211 * pow(10, -27)
+#define m_n_Macro (1.674927211 * pow(10, -27))
 
 /*
  * @brief The macro for deuterium gas (D2) in SI units
  */
-#define D2_Macro 3.343583719 * pow(10, -27)
+#define D2_Macro (3.343583719 * pow(10, -27))
 
 /*
  * @brief The macro to convert from degrees to radians

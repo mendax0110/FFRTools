@@ -2,7 +2,7 @@
 #define MICROMETREPOINT_H_INCLUDED
 
 /// @brief A struct to represent a point in micrometres. \struct MicroMetrePoint
-struct MicroMetrePoint
+struct MicroMeterPoint
 {
     typedef long long position_t;
 
@@ -13,7 +13,7 @@ struct MicroMetrePoint
     /**
      * @brief Default constructor initializing point to (0,0,0).
      */
-    MicroMetrePoint()
+    MicroMeterPoint()
         :    x(0)
         ,    y(0)
         ,    z(0)
@@ -25,7 +25,7 @@ struct MicroMetrePoint
      * @brief Copy constructor.
      * @param rhs The MicroMetrePoint to copy from.
      */
-    explicit MicroMetrePoint(const MicroMeterPoint& rhs)
+    explicit MicroMeterPoint(const MicroMeterPoint& rhs)
         :    x(rhs.x)
         ,    y(rhs.y)
         ,    z(rhs.z)
@@ -38,7 +38,7 @@ struct MicroMetrePoint
      * @param py The y-coordinate in micrometres.
      * @param pz The z-coordinate in micrometres.
      */
-    MicroMetrePoint(const position_t px, const position_t py, const position_t pz)
+    MicroMeterPoint(const position_t px, const position_t py, const position_t pz)
         :    x(px)
         ,    y(py)
         ,    z(pz)

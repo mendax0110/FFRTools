@@ -39,7 +39,7 @@ public:
      */
     VPoint operator()()
     {
-        return VPoint(v_x(), v_y(), v_z());
+        return {v_x(), v_y(), v_z()};
     }
 
     const VPoint size;
@@ -78,18 +78,18 @@ int main(int argc, char* argv[])
         proton_model_t particle(start);
         while_moving(start, particle, collision, field, config.max_length);
 
-        for(auto pos = particle.get_track().begin(); pos != particle.get_track().end(); ++pos)
+        for(const auto & pos : particle.get_track())
         {
-            std::cout << *pos << ",";
+            std::cout << pos << ",";
         }
 
         std::cout << "(end)\n";
 
-        for(auto pos = particle.get_track().begin(); pos != particle.get_track().end(); ++pos)
+        for(const auto & pos : particle.get_track())
         {
             boost::filesystem::path p("positions.txt");
             std::ofstream ofs(p.string().c_str(), std::ios_base::app);
-            ofs << *pos << "\n";
+            ofs << pos << "\n";
         }
     }
 

@@ -9,7 +9,7 @@ const Mass Proton::m_mass = 0.00000000000000000000000000167262158;
 const Charge Proton::m_charge = 0.0000000000000000001602;
 const Time Proton::m_time_step = 0.00000001;
 
-VPoint Proton::move(const VPoint& p, const VElectricField& v)
+VPoint Proton::move(const VPoint& p, const VElectricField& v) const
 {
     // F=mA->A=F/m
     // D=V1*t + 0.5*A*t*t

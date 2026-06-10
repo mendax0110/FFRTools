@@ -13,7 +13,7 @@ public:
      * @param v The electric field at the current position.
      * @return A new position after movement.
      */
-    VPoint move(const VPoint& p, const VElectricField& v);
+    VPoint move(const VPoint& p, const VElectricField& v) const;
 
 private:
     VPoint m_velocity;
