@@ -112,7 +112,7 @@ jobs:
           cd SFPS
           mkdir -p build
           cd build
-          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CXX_FLAGS="-Wno-invalid-specialization"
           make -j$(sysctl -n hw.ncpu)
 
       - name: Build PotentialMap
@@ -120,7 +120,7 @@ jobs:
           cd PotentialMap
           mkdir -p build
           cd build
-          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CXX_FLAGS="-Wno-invalid-specialization"
           make -j$(sysctl -n hw.ncpu)
 
       - name: Build FusionSim
@@ -128,7 +128,7 @@ jobs:
           cd FusionSim
           mkdir -p build
           cd build
-          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CXX_FLAGS="-Wno-invalid-specialization"
           make -j$(sysctl -n hw.ncpu)
 
       - name: Upload SFPS artifact
